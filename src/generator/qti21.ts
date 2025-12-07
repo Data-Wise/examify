@@ -97,10 +97,15 @@ ${correctValues}
     
     const maxChoices = question.type === 'multiple_answers' ? '0' : '1';
     
+    // Generate image elements if present
+    const imageHtml = question.images && question.images.length > 0
+      ? question.images.map(img => `    <p><img src="$IMS-CC-FILEBASE$/items/${img}" alt="Question image"/></p>`).join('\n')
+      : '';
+    
     itemBody = `
   <itemBody>
     <p>${sanitizedStem}</p>
-    <choiceInteraction responseIdentifier="RESPONSE" shuffle="false" maxChoices="${maxChoices}">
+${imageHtml ? imageHtml + '\n' : ''}    <choiceInteraction responseIdentifier="RESPONSE" shuffle="false" maxChoices="${maxChoices}">
 ${choicesXml}
     </choiceInteraction>
   </itemBody>`;
@@ -113,10 +118,15 @@ ${choicesXml}
     responseDeclaration = `
   <responseDeclaration identifier="RESPONSE" cardinality="single" baseType="string"/>`;
     
+    // Generate image elements if present
+    const imageHtml = question.images && question.images.length > 0
+      ? question.images.map(img => `    <p><img src="$IMS-CC-FILEBASE$/items/${img}" alt="Question image"/></p>`).join('\n')
+      : '';
+    
     itemBody = `
   <itemBody>
     <p>${sanitizedStem}</p>
-    <textEntryInteraction responseIdentifier="RESPONSE" expectedLength="50"/>
+${imageHtml ? imageHtml + '\n' : ''}    <textEntryInteraction responseIdentifier="RESPONSE" expectedLength="50"/>
   </itemBody>`;
     
     responseProcessing = '';
@@ -126,10 +136,15 @@ ${choicesXml}
     responseDeclaration = `
   <responseDeclaration identifier="RESPONSE" cardinality="single" baseType="string"/>`;
     
+    // Generate image elements if present
+    const imageHtml = question.images && question.images.length > 0
+      ? question.images.map(img => `    <p><img src="$IMS-CC-FILEBASE$/items/${img}" alt="Question image"/></p>`).join('\n')
+      : '';
+    
     itemBody = `
   <itemBody>
     <p>${sanitizedStem}</p>
-    <extendedTextInteraction responseIdentifier="RESPONSE" expectedLines="10"/>
+${imageHtml ? imageHtml + '\n' : ''}    <extendedTextInteraction responseIdentifier="RESPONSE" expectedLines="10"/>
   </itemBody>`;
     
     responseProcessing = '';

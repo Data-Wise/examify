@@ -167,6 +167,33 @@ export class QtiValidator {
                    if (!score) {
                      report.warnings.push(`Item missing SCORE outcomeDeclaration: ${fileHref}`);
                    }
+                   
+                   // CANVAS CHECK: Empty or very short stem
+                   const itemBody = item.itemBody;
+                   if (itemBody) {
+                     const bodyStr = JSON.stringify(itemBody);
+                     // Check for empty or whitespace-only content
+                     const textContent = bodyStr.replace(/<[^>]+>/g, '').replace(/[{}"\[\],:]/g, '').trim();
+                     if (textContent.length < 5) {
+                       report.errors.push(`Canvas import may fail: Question stem appears empty or too short in ${fileHref}`);
+                     }
+                     
+                     // Check for choice interaction with no options
+                     const choice = itemBody.choiceInteraction;
+                     if (choice) {
+                       const simpleChoices = choice.simpleChoice || [];
+                       const choiceCount = Array.isArray(simpleChoices) ? simpleChoices.length : 1;
+                       if (choiceCount < 2) {
+                         report.errors.push(`Canvas import may fail: Less than 2 answer options in ${fileHref}`);
+                       }
+                     }
+                   }
+                   
+                   // CANVAS CHECK: Identifier format (no special chars)
+                   const identifier = item['@_identifier'];
+                   if (identifier && !/^[a-zA-Z_][a-zA-Z0-9_]*$/.test(identifier)) {
+                     report.warnings.push(`Identifier '${identifier}' contains special characters, may cause issues: ${fileHref}`);
+                   }
 
                    // Response Consistency Check
                    const responseDecl = Array.isArray(item.responseDeclaration) 
