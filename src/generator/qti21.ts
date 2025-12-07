@@ -74,8 +74,13 @@ export function generateItem(question: Question, quizTitle: string): string {
   
   if (question.type === 'multiple_choice' || question.type === 'true_false' || question.type === 'multiple_answers') {
     // Multiple choice / True-False / Multiple Answers
-    const correctValues = correctOptions.length > 0 
-      ? correctOptions.map(o => `      <value>${o.id.toUpperCase()}</value>`).join('\n')
+    // Find indices of correct options to map to generated A, B, C... identifiers
+    const correctIndices = question.options
+      .map((opt, index) => opt.isCorrect ? index : -1)
+      .filter(index => index !== -1);
+
+    const correctValues = correctIndices.length > 0 
+      ? correctIndices.map(index => `      <value>${String.fromCharCode(65 + index)}</value>`).join('\n')
       : '      <value>A</value>'; // Default if no correct answer marked
     
     responseDeclaration = `
