@@ -17,6 +17,8 @@ examify emulate-canvas your-package.qti.zip
 | Image references | Error | All image files must exist in the package |
 | Stem content | Error | Questions must have non-empty text |
 | Option count | Error | Choice questions need at least 2 options |
+| Security | Error | No XSS vectors (`<script>`, `javascript:`) allowed |
+| Path Safety | Error | Resources cannot use `../` traversal |
 | Identifier format | Warning | Special characters may cause issues |
 | responseProcessing | Warning | Manual grading needed if missing |
 

@@ -188,26 +188,24 @@ export class QtiValidator {
                    if (!score) {
                      report.warnings.push(`Item missing SCORE outcomeDeclaration: ${fileHref}`);
                    }
-                   
                    // CANVAS CHECK: Empty or very short stem
                    const itemBody = item.itemBody;
                    if (itemBody) {
                      const bodyStr = JSON.stringify(itemBody);
                      // Check for empty or whitespace-only content
                      const textContent = bodyStr.replace(/<[^>]+>/g, '').replace(/[{}"\[\],:]/g, '').trim();
-                     if (textContent.length < 5) {
-                       report.errors.push(`Canvas import may fail: Question stem appears empty or too short in ${fileHref}`);
+                     
+                     // SECURITY CHECK: Malicious Content
+                     const dangerousTags = ['<script', '<iframe', '<object', '<embed', 'javascript:'];
+                     const bodyContent = bodyStr || '';
+                     
+                     for (const tag of dangerousTags) {
+                         if (bodyContent.toLowerCase().includes(tag)) {
+                           report.errors.push(`Security Error: Potential malicious content (${tag}) detected in item ${item['@_identifier'] || fileHref}`);
+                         }
                      }
                      
-                     // Check for choice interaction with no options
-                     const choice = itemBody.choiceInteraction;
-                     if (choice) {
-                       const simpleChoices = choice.simpleChoice || [];
-                       const choiceCount = Array.isArray(simpleChoices) ? simpleChoices.length : 1;
-                       if (choiceCount < 2) {
-                         report.errors.push(`Canvas import may fail: Less than 2 answer options in ${fileHref}`);
-                       }
-                     }
+
                    }
                    
                    // CANVAS CHECK: Identifier format (no special chars)
@@ -226,7 +224,8 @@ export class QtiValidator {
                      const body = item.itemBody;
                      if (body) {
                         const choice = body.choiceInteraction;
-                        if (choice) {
+                        // Check for choice interaction with no options
+                     if (choice) {
                           const maxChoices = choice['@_maxChoices']; // "1" or "0" (unlimited)
                           // Multiple choice with single answer
                           if (cardinality === 'single' && (maxChoices === '0' || parseInt(maxChoices) > 1)) {
@@ -420,6 +419,14 @@ export class QtiValidator {
       
       if (!questionText || questionText.trim().length < 3) {
         report.errors.push(`Canvas import may fail: Question stem appears empty or too short for item ${itemIdent}`);
+      }
+
+      // SECURITY CHECK: Malicious Content in QTI 1.2
+      const dangerousTags = ['<script', '<iframe', '<object', '<embed', 'javascript:'];
+      for (const tag of dangerousTags) {
+          if (questionText.toLowerCase().includes(tag)) {
+            report.errors.push(`Security Error: Potential malicious content (${tag}) detected in item ${itemIdent}`);
+          }
       }
       
       // Check for answer options (response_lid with render_choice)

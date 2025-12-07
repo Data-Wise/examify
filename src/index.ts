@@ -246,9 +246,10 @@ ${imageResources}
         
         // Create zip file
         const outputZip = options.output || input.replace(/\.(md|txt)$/, '.qti.zip');
+        const absoluteOutputZip = resolve(outputZip);
         
         // Use zip command to create package
-        execSync(`cd "${tempDir}" && zip -r "${process.cwd()}/${outputZip}" .`, { stdio: 'pipe' });
+        execSync(`cd "${tempDir}" && zip -r "${absoluteOutputZip}" .`, { stdio: 'pipe' });
         
         console.log(`✓ Generated QTI 1.2 Package: ${outputZip}`);
         console.log(`  • ${parsed.questions.length} questions`);

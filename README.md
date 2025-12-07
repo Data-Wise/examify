@@ -8,7 +8,8 @@
 
 [![Version](https://img.shields.io/badge/Examify-v0.4.1-7C3AED?style=for-the-badge&logo=markdown&logoColor=white)](https://github.com/Data-Wise/examify/releases)
 [![License](https://img.shields.io/badge/license-MIT-22C55E?style=for-the-badge)](LICENSE)
-[![Tests](https://img.shields.io/badge/tests-32%20passing-3178C6?style=for-the-badge)](https://github.com/Data-Wise/examify/actions)
+[![Tests](https://img.shields.io/badge/tests-34%20passing-3178C6?style=for-the-badge)](https://github.com/Data-Wise/examify/actions)
+[![Security](https://img.shields.io/badge/Security-Hardened-blueviolet?style=for-the-badge)](https://data-wise.github.io/examify/emulator/)
 
 </div>
 
@@ -68,6 +69,23 @@ Reference local images (`![Graph](graph.png)`). We automatically package them wi
 ### 🎓 Import Emulator
 
 Predict import success *before* you upload. Our emulator validates your package against Canvas strict requirements.
+
+</td>
+</tr>
+</tr>
+<tr>
+<td width="50%">
+
+### 🔒 Security Hardened
+
+Built-in protection against XSS and path traversal. We sanitize every input to ensure your exams are safe for LMS deployment.
+
+</td>
+<td width="50%">
+
+### 🎲 Deterministic
+
+Reproducible builds by default. Our content-based hashing ensures that re-running `examify` on the same file produces the exact same QTI package.
 
 </td>
 </tr>

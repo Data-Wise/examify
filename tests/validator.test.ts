@@ -49,7 +49,7 @@ describe('QtiValidator', () => {
         <outcomeDeclaration identifier="SCORE" cardinality="single" baseType="float">
            <defaultValue><value>1</value></defaultValue>
         </outcomeDeclaration>
-        <itemBody><p>Test</p></itemBody>
+        <itemBody><p>This is a valid test question.</p></itemBody>
       </assessmentItem>
     `);
     
@@ -196,6 +196,7 @@ describe('QtiValidator', () => {
            <correctResponse><value>A</value></correctResponse>
         </responseDeclaration>
         <itemBody>
+           <p>Valid question text here</p>
            <choiceInteraction responseIdentifier="RESPONSE" maxChoices="2" shuffle="true">
              <simpleChoice identifier="A">A</simpleChoice>
              <simpleChoice identifier="B">B</simpleChoice>
@@ -230,6 +231,7 @@ describe('QtiValidator', () => {
            <!-- Missing correctResponse! -->
         </responseDeclaration>
         <itemBody>
+           <p>Valid question text here</p>
            <choiceInteraction responseIdentifier="RESPONSE" maxChoices="1">
              <simpleChoice identifier="A">Option A</simpleChoice>
              <simpleChoice identifier="B">Option B</simpleChoice>
@@ -260,6 +262,7 @@ describe('QtiValidator', () => {
       <assessmentItem identifier="item_1">
         <outcomeDeclaration identifier="SCORE" cardinality="single" baseType="float"><defaultValue><value>1</value></defaultValue></outcomeDeclaration>
         <itemBody>
+           <p>Valid question text here</p>
            <orderInteraction responseIdentifier="RESPONSE">
              <simpleChoice identifier="A">First</simpleChoice>
              <simpleChoice identifier="B">Second</simpleChoice>

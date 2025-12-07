@@ -59,7 +59,11 @@ try {
     throw new Error(`CLI not found at ${cliPath}`);
   }
 
-  execSync(`node "${cliPath}" "${inputFile}" -o "${outputFile}"`, {
+  // Since we set CWD to the input file's directory, we must pass filenames, not paths
+  const inputFilename = basename(inputFile);
+  const outputFilename = basename(outputFile);
+
+  execSync(`node "${cliPath}" "${inputFilename}" -o "${outputFilename}"`, {
     stdio: 'inherit',
     cwd: dir
   });
