@@ -1,109 +1,70 @@
 # Canvas QTI Converter
 
-Convert Markdown/Text question files to Canvas-compatible QTI format for easy quiz import.
+<div align="center">
 
-## Features
+![Version](https://img.shields.io/npm/v/canvas-qti-converter?color=blue&style=flat-square)
+![License](https://img.shields.io/github/license/Data-Wise/canvas-qti-converter?style=flat-square)
+![Tests](https://img.shields.io/github/actions/workflow/status/Data-Wise/canvas-qti-converter/publish_docs.yml?label=tests&style=flat-square)
 
-- 📝 Write questions in familiar Markdown format
-- 🔢 Supports Multiple Choice, True/False, Essay, Short Answer
-- 🧮 Preserves LaTeX math notation (`\( \alpha \)`)
-- 📦 Outputs valid QTI 2.1 XML for Canvas import
-- ✅ Built-in diagnostics command (`verify`) to check package integrity
+**Convert Markdown questions to Canvas-compatible QTI 2.1 packages.**
 
-## Automation
+[Documentation](https://data-wise.github.io/canvas-qti-converter/) • [Report Bug](https://github.com/Data-Wise/canvas-qti-converter/issues) • [Request Feature](https://github.com/Data-Wise/canvas-qti-converter/issues)
 
-This repository includes a GitHub Action to integrate **Google's Gemini AI** for automated PR reviews and issue assistance.
-
-1. Go to your repository **Settings** > **Secrets and variables** > **Actions**.
-2. Create a new Repository Secret named `GEMINI_API_KEY` with your Google Gemini API key.
-3. The workflow will automatically run on:
-    - New Pull Requests (Code Review)
-    - Issue Comments (On-demand help via `@gemini-cli`)
-
-## Installation
-
-```bash
-# Clone the repository
-git clone <repo-url>
-cd canvas-qti-converter
-
-# Install dependencies
-npm install
-
-# Build
-npm run build
-
-# Link globally (optional)
-npm link
-```
-
-## Usage
-
-### Convert Questions
-
-```bash
-# Basic conversion
-qti-convert questions.md
-
-# Convert with custom output name
-qti-convert questions.md -o my-quiz.qti.zip
-
-# Preview parsed questions (dry run)
-qti-convert questions.md --preview
-```
-
-### Verify Package
-
-Check a QTI package for common errors, valid structure, and Canvas compatibility.
-
-```bash
-qti-convert verify my-quiz.qti.zip
-# or check a directory
-qti-convert verify ./my-quiz-folder/
-```
-
-### Options
-
-| Option | Description |
-|--------|-------------|
-| `-o, --output <file>` | Output zip file (default: `<input>.qti.zip`) |
-| `-v, --validate` | Validate output structure after generation |
-| `--preview` | Preview parsed questions without generating file |
-
-## Input Format
-
-```markdown
-# Pool: My Question Bank
-Points: 2
+</div>
 
 ---
 
-## Section: Topic Name
+## ✨ Features
 
-Instructions for this section.
+- **📝 Markdown First**: Write questions in plain text or Markdown.
+- **✅ Correct Answers**: Mark answers with `*` or `✓`.
+- **🧮 LaTeX Support**: Full support for math equations (`\( x^2 \)`) converted to Canvas format.
+- **🖼️ Image Support**: Automatically bundles referenced local images.
+- **🛡️ Built-in Validator**: `verify` command ensures your package imports cleanly.
+- **🔍 New in v0.2.1**: T/F arrow syntax (`-> True`) and smart solution block ignoring.
 
-1. What is the correct answer?
-   *a) This is correct (asterisk marks it)
-   b) Wrong answer
-   c) Wrong answer
-   d) Wrong answer
+## 🚀 Quick Start
 
-2. [Essay, 10pts] Explain your reasoning.
+```bash
+# 1. Install
+npm install -g canvas-qti-converter
 
-3. [TF] True or false statement here.
-   *True
-   False
+# 2. Convert a file
+qti-convert exam.md -o exam-export.qti.zip
+
+# 3. Import to Canvas
+# Go into a Course > Settings > Import Course Content > QTI .zip file
 ```
 
-### Syntax
+## 📄 Input Format Example
 
-- `# Pool: Name` - Question bank name
-- `Points: N` - Default points per question
-- `## Section: Name` - Group questions by topic
-- `*a)` - Asterisk prefix marks correct answer
-- `[Essay, Npts]` - Question type override with points
-- `\( LaTeX \)` - Inline math preserved
+```markdown
+# Section: Multiple Choice
 
-## License
+1. What is the powerhouse of the cell?
+   a) Nucleus
+   b) Mitochondria ✓
+   c) Ribosome
 
-MIT
+2. [TF] The sun rises in the west. -> False
+
+<div class="solution">
+  This text is ignored and won't appear in the quiz.
+</div>
+```
+
+Full format documentation is available at our [Documentation Site](https://data-wise.github.io/canvas-qti-converter/formats/).
+
+## 🛠️ Development
+
+```bash
+git clone https://github.com/Data-Wise/canvas-qti-converter.git
+cd canvas-qti-converter
+npm install
+npm run build
+npm test
+```
+
+## 📄 License
+
+MIT © [MediationVerse Team](https://github.com/Data-Wise)

@@ -8,13 +8,18 @@ edit_uri: edit/main/docs/
 theme:
   name: material
   features:
+    - navigation.instant
+    - navigation.tracking
+    - navigation.tabs
+    - navigation.tabs.sticky
     - navigation.sections
     - navigation.expand
-    - navigation.tabs
     - navigation.top
     - navigation.indexes
+    - toc.follow
     - content.code.copy
     - content.action.edit
+  language: en
   palette:
     - scheme: default
       primary: indigo
@@ -28,6 +33,9 @@ theme:
       toggle:
         icon: material/brightness-4
         name: Switch to light mode
+  icon:
+    repo: fontawesome/brands/github
+  logo: material/library
 
 extra:
   social:
