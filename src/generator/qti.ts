@@ -118,11 +118,42 @@ function generateOptionsXml(generatedOptions: GeneratedOption[]): string {
  * Canvas uses score of 100 for correct answers (percentage-based)
  */
 function generateResprocessing(question: Question, generatedOptions: GeneratedOption[]): string {
-  if (question.type === 'essay' || question.type === 'short_answer' || question.type === 'numerical') {
+  // Essay and Numerical (if manual) have no auto-grading or are handled differently
+  // Note: Numerical could be auto-graded but requires specific exact/range matches. 
+  // For now, only Short Answer is enabled for simple text match.
+  if (question.type === 'essay' || question.type === 'numerical') {
     return `<resprocessing>` +
       `<outcomes>` +
       `<decvar maxvalue="100" minvalue="0" varname="SCORE" vartype="Decimal"/>` +
       `</outcomes>` +
+      `</resprocessing>`;
+  }
+
+  // Short Answer / Fill in Blank: Check against TEXT value, not ID
+  if (question.type === 'short_answer' || question.type === 'fill_in_blank') {
+    // Find the correct option (extracted by parser)
+    const correctOption = generatedOptions.find(go => go.option.isCorrect);
+    
+    // If no correct answer defined, fall back to manual grading (no respcondition)
+    if (!correctOption) {
+      return `<resprocessing>` +
+        `<outcomes>` +
+        `<decvar maxvalue="100" minvalue="0" varname="SCORE" vartype="Decimal"/>` +
+        `</outcomes>` +
+        `</resprocessing>`;
+    }
+
+    // Canvas Short Answer: exact match (varequal)
+    return `<resprocessing>` +
+      `<outcomes>` +
+      `<decvar maxvalue="100" minvalue="0" varname="SCORE" vartype="Decimal"/>` +
+      `</outcomes>` +
+      `<respcondition continue="No">` +
+      `<conditionvar>` +
+      `<varequal respident="response1">${escapeXmlPreserveLaTeX(correctOption.option.text)}</varequal>` +
+      `</conditionvar>` +
+      `<setvar actoin="Set" varname="SCORE">100</setvar>` +
+      `</respcondition>` +
       `</resprocessing>`;
   }
 

@@ -233,6 +233,21 @@ export function parseMarkdown(content: string): ParsedQuiz {
        if (type === 'multiple_choice') {
          type = 'short_answer';
        }
+
+       // Parse answer from stem for Short Answer / Fill in blank
+       if (type === 'short_answer' || type === 'fill_in_blank') {
+         // Check stem for "Answer: ..." pattern
+         const answerMatch = currentQuestion.stem?.match(/(?:Answer:|Ans:)\s*(.+)$/i);
+         if (answerMatch) {
+             const answerText = answerMatch[1].trim();
+             // Add as correct option so generator can use it
+             options.push({ id: 'answer1', text: answerText, isCorrect: true });
+             // Remove from stem to clean up display
+             if (currentQuestion.stem) {
+                 currentQuestion.stem = currentQuestion.stem.replace(answerMatch[0], '').trim();
+             }
+         }
+       }
     }
     
     const question: Question = {
