@@ -12,7 +12,7 @@ We love your input! We want to make contributing to this project as easy and tra
 1. Clone the repo:
 
    ```bash
-   git clone https://github.com/your-org/canvas-qti-converter
+   git clone https://github.com/Data-Wise/canvas-qti-converter
    cd canvas-qti-converter
    ```
 

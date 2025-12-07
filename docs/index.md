@@ -1,8 +1,8 @@
 # Canvas QTI Converter
 
-[![Build Status](https://github.com/your-org/canvas-qti-converter/actions/workflows/publish_docs.yml/badge.svg)](https://github.com/your-org/canvas-qti-converter/actions)
+[![Build Status](https://github.com/Data-Wise/canvas-qti-converter/actions/workflows/publish_docs.yml/badge.svg)](https://github.com/Data-Wise/canvas-qti-converter/actions)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Version](https://img.shields.io/badge/version-0.2.0-blue.svg)](https://github.com/your-org/canvas-qti-converter)
+[![Version](https://img.shields.io/badge/version-0.2.0-blue.svg)](https://github.com/Data-Wise/canvas-qti-converter)
 
 Convert Markdown/Text question files to Canvas-compatible QTI format for easy quiz import.
 
