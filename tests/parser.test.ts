@@ -68,4 +68,26 @@ describe('Markdown Parser', () => {
     expect(result.questions[0].points).toBe(2);
     expect(result.questions[0].stem).toBe('Question Title'); // Should NOT have [2 pts]
   });
+
+  it('should auto-generate options for True/False questions if missing', () => {
+    const input = `
+# Section: True/False
+## 1. Simple Fact
+The sky is blue. -> True
+
+## 2. Another Fact
+Water is dry. -> False
+    `;
+    const result = parseMarkdown(input);
+    const q1 = result.questions[0];
+    expect(q1.type).toBe('true_false');
+    expect(q1.options.length).toBe(2);
+    expect(q1.options[0].text).toBe('True');
+    expect(q1.options[0].isCorrect).toBe(true);
+    expect(q1.stem).not.toContain('-> True');
+
+    const q2 = result.questions[1];
+    expect(q2.options[1].text).toBe('False');
+    expect(q2.options[1].isCorrect).toBe(true);
+  });
 });

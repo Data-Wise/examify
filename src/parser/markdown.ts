@@ -158,11 +158,27 @@ export function parseMarkdown(content: string): ParsedQuiz {
     // Auto-detect question type from options
     if (options.length > 0 && isTrueFalseQuestion(options)) {
       type = 'true_false';
-    } else if (options.length === 0) {
-      // No options = probably essay or short answer
-      if (type === 'multiple_choice') {
-        type = 'short_answer';
+    }
+
+    // parse answer from stem if provided (e.g. -> True)
+    if (type === 'true_false' && options.length === 0) {
+      // Check for answer pattern in stem
+      const answerMatch = currentQuestion.stem?.match(/(?:->|Answer:|Ans:)\s*(True|False)/i);
+      const correctAnswer = answerMatch ? answerMatch[1].toLowerCase() : null;
+      
+      // Auto-generate options
+      options.push({ id: 'a', text: 'True', isCorrect: correctAnswer === 'true' });
+      options.push({ id: 'b', text: 'False', isCorrect: correctAnswer === 'false' });
+      
+      // Clean stem of the answer key if found
+      if (answerMatch && currentQuestion.stem) {
+        currentQuestion.stem = currentQuestion.stem.replace(answerMatch[0], '').trim();
       }
+    } else if (options.length === 0) {
+       // No options = probably essay or short answer
+       if (type === 'multiple_choice') {
+         type = 'short_answer';
+       }
     }
     
     const question: Question = {
