@@ -2,13 +2,13 @@
 
 <div align="center">
 
-![Version](https://img.shields.io/npm/v/canvas-qti-converter?color=blue&style=flat-square)
+![Version](https://img.shields.io/badge/version-0.2.2-blue?style=flat-square)
 ![License](https://img.shields.io/github/license/Data-Wise/canvas-qti-converter?style=flat-square)
-![Tests](https://img.shields.io/github/actions/workflow/status/Data-Wise/canvas-qti-converter/publish_docs.yml?label=tests&style=flat-square)
+![Tests](https://img.shields.io/badge/tests-32%20passing-brightgreen?style=flat-square)
 
-**Convert Markdown questions to Canvas-compatible QTI 2.1 packages.**
+**Convert Markdown questions to Canvas-compatible QTI 2.1 packages**
 
-[Documentation](https://data-wise.github.io/canvas-qti-converter/) • [Report Bug](https://github.com/Data-Wise/canvas-qti-converter/issues) • [Request Feature](https://github.com/Data-Wise/canvas-qti-converter/issues)
+[📖 Documentation](https://data-wise.github.io/canvas-qti-converter/) • [🐛 Report Bug](https://github.com/Data-Wise/canvas-qti-converter/issues) • [💡 Request Feature](https://github.com/Data-Wise/canvas-qti-converter/issues)
 
 </div>
 
@@ -16,54 +16,105 @@
 
 ## ✨ Features
 
-- **📝 Markdown First**: Write questions in plain text or Markdown.
-- **✅ Correct Answers**: Mark answers with `*` or `✓`.
-- **🧮 LaTeX Support**: Full support for math equations (`\( x^2 \)`) converted to Canvas format.
-- **🖼️ Image Support**: Automatically bundles referenced local images.
-- **🛡️ Built-in Validator**: `verify` command ensures your package imports cleanly.
-- **🆕 v0.2.2**: `[correct]` marker for Quarto, `[MultiAns]`/`[TF]` type tags.
+| Feature | Description |
+|---------|-------------|
+| 📝 **Markdown First** | Write questions in simple Markdown syntax |
+| ✅ **Flexible Correct Markers** | Use `[correct]`, `✓`, `*`, or `**bold**` |
+| 🧮 **LaTeX Support** | Math equations `$...$` converted to Canvas format |
+| 🖼️ **Image Support** | Bundles images including R/Python-generated figures |
+| 🎓 **Canvas Emulator** | Predict import success before uploading |
+| 🛡️ **Built-in Validator** | Catches common import issues |
 
 ## 🚀 Quick Start
 
 ```bash
-# 1. Install
-npm install -g canvas-qti-converter
+# Clone and install
+git clone https://github.com/Data-Wise/canvas-qti-converter.git
+cd canvas-qti-converter
+npm install && npm run build && npm link
 
-# 2. Convert a file
-qti-convert exam.md -o exam-export.qti.zip
+# Convert a file
+qti-convert quiz.md -o quiz.qti.zip
 
-# 3. Import to Canvas
-# Go into a Course > Settings > Import Course Content > QTI .zip file
+# Predict Canvas import success
+qti-convert emulate-canvas quiz.qti.zip
 ```
 
-## 📄 Input Format Example
+## 📄 Input Format
 
 ```markdown
-# Section: Multiple Choice
+# Pool: Statistics Quiz
 
-1. What is the powerhouse of the cell?
-   a) Nucleus
-   b) Mitochondria ✓
-   c) Ribosome
+## 1. What is the mean of 2, 4, 6?
+a) 3
+b) 4 [correct]
+c) 5
 
-2. [TF] The sun rises in the west. -> False
+## 2. [TF] Variance can be negative.
+*False
+True
 
-<div class="solution">
-  This text is ignored and won't appear in the quiz.
-</div>
+## 3. [Essay, 10pts] Explain the central limit theorem.
 ```
 
-Full format documentation is available at our [Documentation Site](https://data-wise.github.io/canvas-qti-converter/formats/).
+### Correct Answer Markers
+
+| Marker | Example | Best For |
+|--------|---------|----------|
+| `[correct]` | `b) Answer [correct]` | Quarto (recommended) |
+| `✓` | `b) Answer ✓` | Visual editing |
+| `*` prefix | `*b) Answer` | Quick marking |
+| `**bold**` | `b) **Answer**` | Markdown native |
+
+### Question Types
+
+| Type | Syntax |
+|------|--------|
+| Multiple Choice | Default |
+| True/False | `[TF]` or `→ True/False` |
+| Multiple Answer | `[MultiAns]` |
+| Essay | `[Essay]` |
+| Short Answer | `[Short]` |
+
+## 🎓 Canvas Emulator
+
+Predict whether your QTI will import successfully:
+
+```bash
+$ qti-convert emulate-canvas quiz.qti.zip
+
+🎓 Canvas Import Emulator
+
+📊 Analysis Results:
+   Items scanned: 7
+   Resources: 8
+   Has test structure: Yes
+
+✅ PREDICTION: Canvas import will likely SUCCEED
+```
+
+## 🔧 Commands
+
+| Command | Description |
+|---------|-------------|
+| `qti-convert <file.md>` | Convert to QTI package |
+| `qti-convert verify <file.zip>` | Validate package structure |
+| `qti-convert emulate-canvas <file.zip>` | Predict Canvas import |
+| `qti-convert check <file.md>` | Lint input file |
 
 ## 🛠️ Development
 
 ```bash
-git clone https://github.com/Data-Wise/canvas-qti-converter.git
-cd canvas-qti-converter
-npm install
-npm run build
-npm test
+npm install      # Install dependencies
+npm run build    # Build project
+npm test         # Run tests (32 passing)
+npm link         # Install globally
 ```
+
+## 📚 Documentation
+
+Full documentation with tutorials available at:
+**[https://data-wise.github.io/canvas-qti-converter/](https://data-wise.github.io/canvas-qti-converter/)**
 
 ## 📄 License
 
