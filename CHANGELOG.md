@@ -14,6 +14,17 @@ All notable changes to this project will be documented in this file.
 
 - **Release**: Releases now include bundled extension artifacts (`examify-extension.zip`).
 
+### Security
+
+- **Hardened Validator**: Added checks for XSS vectors (`<script>`, `javascript:`) and path traversal (`../`) in input files.
+- **Torture Tests**: Added `torture.test.ts` suite to verify system resilience against malicious inputs.
+
+### Correctness
+
+- **Deterministic IDs**: QTI identifiers are now generated via SHA-256 hash of content, ensuring 100% reproducible builds.
+- **Short Answer**: Fixed issue where "Answer: ..." text was not correctly generating Canvas auto-grading logic.
+- **Bundled Images**: Fixed manifest generation to explicitly link images as `<dependency>` of the assessment resource (fixes broken images in Canvas).
+
 ## [0.4.0] - 2025-12-07
 
 ### Added
