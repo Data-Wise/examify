@@ -27,9 +27,13 @@ If you are in an offline environment or prefer manual management, you can downlo
 unzip examify-extension.zip
 ```
 
-## 2. Project Configuration
+## 2. Project Configuration & Defaults
 
-We recommend managing your exam settings globally in `_quarto.yml` so all your exams share the same look and logic.
+We recommend managing your exam settings globally in `_quarto.yml`. This allows you to define "defaults" once and override them in individual files only when necessary.
+
+### Global Defaults
+
+By configuring `_quarto.yml` in your project root, all `.qmd` files will inherit these settings.
 
 ```yaml
 project:
@@ -37,15 +41,34 @@ project:
 
 format:
   exam-gfm: 
-    qti-export: true  # <--- REQUIRED to generate QTI zip
+    # Global: Auto-generate QTI zip for ALL exams in this project
+    qti-export: true
     exam:
       default-points: 1
       shuffle-answers: true
+
   exam-pdf:
     exam:
       header:
         left: "STAT 101"
         right: "Name: ________________"
+      # Global PDF layout defaults
+      answer-space:
+        short-answer: 3cm
+```
+
+### Per-Document Overrides
+
+You can override these defaults in a specific exam file's YAML header. For example, if you have one specific quiz where you *don't* want to shuffle answers:
+
+```yaml
+---
+title: "Quiz 1"
+format:
+  exam-gfm:
+    exam:
+      shuffle-answers: false  # <--- Overrides global default
+---
 ```
 
 ## 3. Authoring Workflow
