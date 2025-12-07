@@ -41,8 +41,9 @@ project:
 
 format:
   exam-gfm: 
-    # Global: Auto-generate QTI zip for ALL exams in this project
-    qti-export: true
+    # Global: Auto-generate QTI zip? (Default: false)
+    # Set to true to enable automatic generation for all exams.
+    qti-export: false
     exam:
       default-points: 1
       shuffle-answers: true
