@@ -1,0 +1,30 @@
+name: Gemini CLI Check
+
+on:
+  push:
+    branches:
+      - main
+      - dev
+  pull_request:
+
+jobs:
+  gemini-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      
+      # Assuming user wants to use a Gemini-based tool or the 'gemini-cli' tool referred to in other conversations
+      # Placeholder for actual Gemini Action or Tool usage
+      # - name: Run Gemini CLI Action
+      #   uses: google-github-actions/auth@v2
+      #   with:
+      #     credentials_json: '${{ secrets.GOOGLE_CREDENTIALS }}'
+      
+      # - name: Run Gemini Diagnostic
+      #   run: |
+      #     echo "Running Gemini CLI checks..."
+      #     # gemini analyze . 

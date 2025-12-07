@@ -1,0 +1,34 @@
+site_name: Canvas QTI Converter
+site_description: Convert Markdown/Text questions to Canvas-compatible QTI format.
+site_author: "MediationVerse Team"
+repo_url: https://github.com/your-org/canvas-qti-converter
+edit_uri: edit/main/docs/
+
+theme:
+  name: material
+  features:
+    - navigation.sections
+    - navigation.expand
+    - content.code.copy
+  palette:
+    - scheme: default
+      primary: indigo
+      accent: deep purple
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - scheme: slate
+      primary: indigo
+      accent: deep purple
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+
+plugins:
+  - search
+
+nav:
+  - Home: index.md
+  - Usage: usage.md
+  - Formats: formats.md
+  - API Reference: reference.md

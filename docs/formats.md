@@ -1,0 +1,74 @@
+# Supported Formats
+
+The converter accepts a simple Markdown-based format.
+
+## Structure
+
+```markdown
+# Pool: Question Bank Name
+Points: 1
+
+---
+
+## Section: Topic 1
+Instructions for this section.
+
+1. Question text?
+   *a) Correct answer
+   b) Wrong answer
+```
+
+## Question Types
+
+### Multiple Choice
+
+Mark the correct answer with an asterisk `*`.
+
+```markdown
+1. What is 2 + 2?
+   a) 3
+   *b) 4
+   c) 5
+```
+
+### True / False
+
+Use `[TF]` tag.
+
+```markdown
+2. [TF] The sky is blue.
+   *True
+   False
+```
+
+### Essay
+
+Use `[Essay]` tag.
+
+```markdown
+3. [Essay] Explain the process of photosynthesis.
+```
+
+### Short Answer
+
+Not explicitly tagged, but defined by providing text answers without choices? (Requires verifying implementation detail, usually strictly defined or treated as essay if no choices).
+
+## Custom Points
+
+Override default points per question.
+
+```markdown
+4. [Essay, 10pts] A hard question.
+```
+
+## Images
+
+Reference local images using standard Markdown syntax. They will be bundled into the package.
+
+```markdown
+5. What does this graph show?
+   ![Graph](assets/graph.png)
+   
+   *a) Linear growth
+   b) Exponential growth
+```
