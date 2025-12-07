@@ -26,11 +26,21 @@ jobs:
         run: bun run build
         
       # Create a zip of the dist folder for the release
-      - name: Archive Production Artifact
-        run: zip -r examify-dist.zip dist/ package.json README.md LICENSE
+      - name: Archive CLI Artifact
+        run: zip -r examify-cli.zip dist/ package.json README.md LICENSE
+
+      # Create a zip of the extension for manual distribution
+      - name: Archive Extension Artifact
+        run: |
+          mkdir -p extension-dist
+          cp -r _extensions extension-dist/
+          cd extension-dist
+          zip -r ../examify-extension.zip _extensions
 
       - name: Create Release
         uses: softprops/action-gh-release@v1
         with:
-          files: examify-dist.zip
+          files: |
+            examify-cli.zip
+            examify-extension.zip
           generate_release_notes: true
