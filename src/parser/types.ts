@@ -4,10 +4,15 @@
 
 export type QuestionType = 
   | 'multiple_choice'
+  | 'multiple_answers'    // Multiple correct answers allowed
   | 'true_false'
   | 'essay'
   | 'short_answer'
-  | 'fill_in_blank';
+  | 'fill_in_blank'
+  | 'fill_in_multiple_blanks'  // Multiple blanks in one question
+  | 'matching'            // Match items from two lists
+  | 'numerical'           // Numeric answer with tolerance
+  | 'calculated'          // Formula-based with variables;
 
 export interface AnswerOption {
   id: string;          // a, b, c, d, etc.
@@ -23,6 +28,7 @@ export interface Question {
   points: number;
   section?: string;        // Section this question belongs to
   instructions?: string;   // Optional per-question instructions
+  images?: string[];       // Paths to images referenced in the question
 }
 
 export interface Section {

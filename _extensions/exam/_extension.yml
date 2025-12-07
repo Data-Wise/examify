@@ -1,0 +1,185 @@
+title: Quarto Exam Extension
+author: Davood Tofighi
+version: 1.0.0
+quarto-required: ">=1.4.0"
+
+# Shared exam options used across all formats
+# Users can override these in their document YAML
+contributes:
+  formats:
+    # =========================================
+    # HTML Preview Format
+    # =========================================
+    exam-html:
+      toc: false
+      number-sections: false
+      theme: 
+        - cosmo
+        - exam.scss
+      filters:
+        - exam-filter.lua
+      # Shared exam options
+      exam:
+        solutions: false
+        default-points: 2
+        grading-table: true
+        shuffle-answers: false
+        # Styling (applied via CSS variables)
+        fonts:
+          size: 11pt
+          section-size: 1.2em
+          question-title-size: 1em
+          question-title-weight: 600
+          question-desc-size: 1em
+          question-desc-weight: 400
+        # Answer space (ignored in HTML, for PDF only)
+        answer-space:
+          short-answer: 2cm
+          essay: 5cm
+    
+    # =========================================
+    # PDF Format (Student Version)
+    # =========================================
+    exam-pdf:
+      documentclass: article
+      fontsize: 10pt
+      geometry: margin=1in
+      filters:
+        - exam-filter.lua
+      exam:
+        solutions: false
+        default-points: 2
+        grading-table: true
+        fonts:
+          size: 10pt
+          question-size: 1em
+          section-size: 1.2em
+          question-weight: 600
+        answer-space:
+          multiple-choice: 0cm
+          true-false: 0cm
+          short-answer: 2cm
+          numeric: 1.5cm
+          essay: 5cm
+        header:
+          left: "{{course.number}}"
+          right: "Name: _______"
+        footer:
+          center: "Page {{page}} of {{pages}}"
+    
+    # =========================================
+    # PDF Format (With Solutions)
+    # =========================================
+    exam-pdf-solutions:
+      documentclass: article
+      fontsize: 10pt
+      geometry: margin=1in
+      filters:
+        - exam-filter.lua
+      exam:
+        solutions: true
+        default-points: 2
+        grading-table: true
+        fonts:
+          size: 10pt
+          question-size: 1em
+          question-weight: 600
+        answer-space:
+          short-answer: 0cm
+          essay: 0cm
+        header:
+          left: "SOLUTIONS"
+          right: "{{course.number}}"
+    
+    # =========================================
+    # ODT Format (OpenDocument - Google Docs, LibreOffice)
+    # Matches PDF format as closely as possible
+    # =========================================
+    exam-odt:
+      toc: false
+      number-sections: false
+      filters:
+        - exam-filter.lua
+      exam:
+        solutions: false
+        grading-table: true
+        default-points: 2
+        fonts:
+          size: 10pt
+          question-size: 1em
+          section-size: 1.2em
+          question-weight: 600
+        answer-space:
+          short-answer: 2cm
+          essay: 5cm
+        
+    exam-odt-solutions:
+      toc: false
+      number-sections: false
+      filters:
+        - exam-filter.lua
+      exam:
+        solutions: true
+        grading-table: true
+        fonts:
+          size: 10pt
+          question-size: 1em
+          question-weight: 600
+        answer-space:
+          short-answer: 0cm
+          essay: 0cm
+
+    # =========================================
+    # DOCX Format (Microsoft Office)
+    # =========================================
+    exam-docx:
+      toc: false
+      filters:
+        - exam-filter.lua
+      exam:
+        solutions: false
+        grading-table: true
+        
+    exam-docx-solutions:
+      toc: false
+      filters:
+        - exam-filter.lua
+      exam:
+        solutions: true
+        grading-table: true
+
+    # =========================================
+    # Markdown for QTI Conversion
+    # =========================================
+    exam-gfm:
+      variant: gfm
+      filters:
+        - exam-filter.lua
+      exam:
+        solutions: false
+        # Include answer markers for QTI parsing
+        include-answers: true
+
+    # =========================================
+    # Typst Format (Modern PDF)
+    # =========================================
+    exam-typst:
+      fontsize: 10pt
+      margin:
+        x: 1in
+        y: 1in
+      filters:
+        - exam-filter.lua
+      exam:
+        solutions: false
+        grading-table: true
+        
+    exam-typst-solutions:
+      fontsize: 10pt
+      margin:
+        x: 1in
+        y: 1in
+      filters:
+        - exam-filter.lua
+      exam:
+        solutions: true

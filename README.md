@@ -7,29 +7,58 @@ Convert Markdown/Text question files to Canvas-compatible QTI format for easy qu
 - 📝 Write questions in familiar Markdown format
 - 🔢 Supports Multiple Choice, True/False, Essay, Short Answer
 - 🧮 Preserves LaTeX math notation (`\( \alpha \)`)
-- 📦 Outputs valid QTI XML for Canvas import
+- 📦 Outputs valid QTI 2.1 XML for Canvas import
+- ✅ Built-in diagnostics command (`verify`) to check package integrity
 
 ## Installation
 
 ```bash
-npm install -g canvas-qti-converter
-# or
-bun install -g canvas-qti-converter
+# Clone the repository
+git clone <repo-url>
+cd canvas-qti-converter
+
+# Install dependencies
+npm install
+
+# Build
+npm run build
+
+# Link globally (optional)
+npm link
 ```
 
 ## Usage
 
+### Convert Questions
+
 ```bash
-qti-convert questions.md -o output.qti.xml
+# Basic conversion
+qti-convert questions.md
+
+# Convert with custom output name
+qti-convert questions.md -o my-quiz.qti.zip
+
+# Preview parsed questions (dry run)
+qti-convert questions.md --preview
+```
+
+### Verify Package
+
+Check a QTI package for common errors, valid structure, and Canvas compatibility.
+
+```bash
+qti-convert verify my-quiz.qti.zip
+# or check a directory
+qti-convert verify ./my-quiz-folder/
 ```
 
 ### Options
 
 | Option | Description |
 |--------|-------------|
-| `-o, --output <file>` | Output file (default: `<input>.qti.xml`) |
-| `-v, --validate` | Validate output structure |
-| `--preview` | Preview parsed questions |
+| `-o, --output <file>` | Output zip file (default: `<input>.qti.zip`) |
+| `-v, --validate` | Validate output structure after generation |
+| `--preview` | Preview parsed questions without generating file |
 
 ## Input Format
 

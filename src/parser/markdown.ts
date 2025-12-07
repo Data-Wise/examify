@@ -1,76 +1,97 @@
 /**
  * Markdown parser for quiz questions
+ * Supports both original format AND Quarto GFM output
  */
 
 import type { ParsedQuiz, Question, Section, AnswerOption, QuestionType } from './types.js';
 import { slugify } from './types.js';
 
 /**
- * Parse question type from inline tag or section context
+ * Parse question type from title or section context
  */
-function parseQuestionType(text: string, sectionTitle?: string): { type: QuestionType; points?: number; cleanText: string } {
-  // Check for inline tags like [Essay, 10pts] or [TF] or [Short]
-  const tagMatch = text.match(/^\s*\[([^\]]+)\]\s*/);
+function parseQuestionType(text: string, sectionTitle?: string): QuestionType {
+  const lower = text.toLowerCase();
   
-  if (tagMatch) {
-    const tag = tagMatch[1].toLowerCase();
-    const cleanText = text.replace(tagMatch[0], '').trim();
-    
-    // Parse points if present
-    const pointsMatch = tag.match(/(\d+)\s*pts?/i);
-    const points = pointsMatch ? parseInt(pointsMatch[1], 10) : undefined;
-    
-    if (tag.includes('essay')) return { type: 'essay', points, cleanText };
-    if (tag.includes('tf') || tag.includes('true')) return { type: 'true_false', points, cleanText };
-    if (tag.includes('short')) return { type: 'short_answer', points, cleanText };
-    if (tag.includes('fill')) return { type: 'fill_in_blank', points, cleanText };
-  }
+  // Check question title for hints
+  if (lower.includes('essay')) return 'essay';
+  if (lower.includes('short') && lower.includes('answer')) return 'short_answer';
+  if (lower.includes('fill') || lower.includes('blank')) return 'fill_in_blank';
   
   // Check section title for hints
   if (sectionTitle) {
-    const lower = sectionTitle.toLowerCase();
-    if (lower.includes('essay')) return { type: 'essay', cleanText: text };
-    if (lower.includes('true') || lower.includes('false')) return { type: 'true_false', cleanText: text };
-    if (lower.includes('short')) return { type: 'short_answer', cleanText: text };
+    const sectionLower = sectionTitle.toLowerCase();
+    if (sectionLower.includes('essay')) return 'essay';
+    if (sectionLower.includes('true') || sectionLower.includes('false')) return 'true_false';
+    if (sectionLower.includes('short')) return 'short_answer';
+    if (sectionLower.includes('multi-part') || sectionLower.includes('multi part')) return 'essay';
   }
   
-  return { type: 'multiple_choice', cleanText: text };
+  return 'multiple_choice';
 }
 
 /**
- * Parse answer options from sub-items
+ * Check if text represents True/False question
+ */
+function isTrueFalseQuestion(options: AnswerOption[]): boolean {
+  if (options.length !== 2) return false;
+  const texts = options.map(o => o.text.toLowerCase().trim());
+  return texts.includes('true') && texts.includes('false');
+}
+
+/**
+ * Parse answer options from lines following a question
+ * Handles multiple formats:
+ * - 1) Answer, 2) Answer (Quarto GFM numbered)
+ * - a) Answer, b) Answer (lettered)
+ * - **Bold answer** for correct
  */
 function parseOptions(lines: string[]): AnswerOption[] {
   const options: AnswerOption[] = [];
   
   for (const line of lines) {
-    // Match patterns like: *a) Answer, a) Answer, - *Answer, - Answer
-    const match = line.match(/^\s*(\*?)([a-e])\)\s*(.+)$/i) ||
-                  line.match(/^\s*-\s*(\*?)(.+)$/);
+    const trimmed = line.trim();
+    if (!trimmed) continue;
     
-    if (match) {
-      const isCorrect = match[1] === '*';
-      const id = match[2].length === 1 ? match[2].toLowerCase() : String.fromCharCode(97 + options.length);
-      const text = match[3] || match[2];
-      
-      // Clean up asterisks that might be in text
-      const cleanText = text.replace(/^\*|\*$/g, '').trim();
-      
-      options.push({ id, text: cleanText, isCorrect });
+    // Match numbered options: 1) Answer, 2) Answer
+    const numMatch = trimmed.match(/^(\d+)\)\s+(.+)$/);
+    if (numMatch) {
+      const text = numMatch[2];
+      const isCorrect = text.includes('**') && text.includes('**');
+      const cleanText = text.replace(/\*\*/g, '').trim();
+      options.push({
+        id: String.fromCharCode(96 + parseInt(numMatch[1])), // 1->a, 2->b, etc.
+        text: cleanText,
+        isCorrect
+      });
+      continue;
     }
-  }
-  
-  // Check for True/False pattern
-  if (options.length === 0) {
-    for (const line of lines) {
-      const tfMatch = line.match(/^\s*(\*?)(True|False)\s*$/i);
-      if (tfMatch) {
-        options.push({
-          id: tfMatch[2].toLowerCase() === 'true' ? 'true' : 'false',
-          text: tfMatch[2],
-          isCorrect: tfMatch[1] === '*'
-        });
-      }
+    
+    // Match lettered options: a) Answer, b) Answer
+    const letterMatch = trimmed.match(/^([a-e])\)\s+(.+)$/i);
+    if (letterMatch) {
+      const text = letterMatch[2];
+      const isCorrect = text.includes('**') || text.startsWith('*');
+      const cleanText = text.replace(/\*\*/g, '').replace(/^\*/, '').trim();
+      options.push({
+        id: letterMatch[1].toLowerCase(),
+        text: cleanText,
+        isCorrect
+      });
+      continue;
+    }
+    
+    // Match dash options: - Answer or -  **Answer** (correct)
+    const dashMatch = trimmed.match(/^-\s+(.+)$/);
+    if (dashMatch) {
+      const text = dashMatch[1];
+      const isCorrect = text.includes('**');
+      const cleanText = text.replace(/\*\*/g, '').trim();
+      options.push({
+        id: String.fromCharCode(97 + options.length), // a, b, c, ...
+        text: cleanText,
+        isCorrect
+      });
+      continue;
     }
   }
   
@@ -78,16 +99,35 @@ function parseOptions(lines: string[]): AnswerOption[] {
 }
 
 /**
- * Detect if options indicate True/False question
+ * Extract points from title like "Question Title [2 pts]" or "[5 pts]"
  */
-function isTrueFalse(options: AnswerOption[]): boolean {
-  if (options.length !== 2) return false;
-  const texts = options.map(o => o.text.toLowerCase());
-  return texts.includes('true') && texts.includes('false');
+function extractPoints(title: string): { points: number | null; cleanTitle: string } {
+  const match = title.match(/\[(\d+)\s*pts?\]/i);
+  if (match) {
+    return {
+      points: parseInt(match[1], 10),
+      cleanTitle: title.replace(match[0], '').trim()
+    };
+  }
+  return { points: null, cleanTitle: title };
+}
+
+/**
+ * Extract distinct image paths from markdown text
+ */
+function extractImages(text: string): string[] {
+  const images = new Set<string>();
+  const regex = /!\[.*?\]\((.*?)(?:\s+".*?")?\)/g;
+  let match;
+  while ((match = regex.exec(text)) !== null) {
+    images.add(match[1]);
+  }
+  return Array.from(images);
 }
 
 /**
  * Parse full markdown content into structured quiz
+ * Supports Quarto GFM output format
  */
 export function parseMarkdown(content: string): ParsedQuiz {
   const lines = content.split('\n');
@@ -99,134 +139,145 @@ export function parseMarkdown(content: string): ParsedQuiz {
   
   let currentSection: Section | null = null;
   let currentQuestion: Partial<Question> | null = null;
-  let currentOptionLines: string[] = [];
-  let sectionInstructions = '';
-  let questionId = 0;
+  let currentQuestionLines: string[] = [];
+  let questionCounter = 0;
+  let inCoverPage = true; // Skip cover page content
   
   const finalizeQuestion = () => {
-    if (currentQuestion && currentQuestion.stem) {
-      let options = parseOptions(currentOptionLines);
-      
-      // Detect question type if not already set
-      let type = currentQuestion.type || 'multiple_choice';
-      if (options.length > 0 && isTrueFalse(options)) {
-        type = 'true_false';
-      } else if (options.length === 0 && type === 'multiple_choice') {
+    if (!currentQuestion || !currentQuestion.stem) {
+      currentQuestion = null;
+      currentQuestionLines = [];
+      return;
+    }
+    
+    const options = parseOptions(currentQuestionLines);
+    let type = currentQuestion.type || 'multiple_choice';
+    
+    // Auto-detect question type from options
+    if (options.length > 0 && isTrueFalseQuestion(options)) {
+      type = 'true_false';
+    } else if (options.length === 0) {
+      // No options = probably essay or short answer
+      if (type === 'multiple_choice') {
         type = 'short_answer';
       }
-      
-      // For True/False questions without options, auto-generate them
-      // The correct answer is determined by the first option line marked with *
-      if (type === 'true_false' && options.length === 0) {
-        // Check if any option line indicates the correct answer
-        const correctAnswer = currentOptionLines.find(l => l.trim().match(/^\*?(True|False)$/i));
-        const isTrue = correctAnswer?.toLowerCase().includes('true') && correctAnswer?.startsWith('*');
-        options = [
-          { id: 'true', text: 'True', isCorrect: isTrue || false },
-          { id: 'false', text: 'False', isCorrect: !isTrue }
-        ];
-        // If we found a marked answer, use it
-        for (const line of currentOptionLines) {
-          if (line.trim().startsWith('*')) {
-            const isCorrectTrue = line.toLowerCase().includes('true');
-            options = [
-              { id: 'true', text: 'True', isCorrect: isCorrectTrue },
-              { id: 'false', text: 'False', isCorrect: !isCorrectTrue }
-            ];
-            break;
-          }
-        }
-      }
-      
-      const question: Question = {
-        id: currentQuestion.id!,
-        type,
-        stem: currentQuestion.stem,
-        options,
-        points: currentQuestion.points || defaultPoints,
-        section: currentSection?.id,
-      };
-      
-      questions.push(question);
-      
-      if (currentSection) {
-        currentSection.questionIds.push(question.id);
-      }
     }
+    
+    const question: Question = {
+      id: currentQuestion.id!,
+      type,
+      stem: currentQuestion.stem,
+      options,
+      points: currentQuestion.points || defaultPoints,
+      section: currentSection?.id,
+      images: extractImages(currentQuestion.stem),
+    };
+    
+    questions.push(question);
+    
+    if (currentSection) {
+      currentSection.questionIds.push(question.id);
+    }
+    
     currentQuestion = null;
-    currentOptionLines = [];
+    currentQuestionLines = [];
   };
   
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i];
     const trimmed = line.trim();
     
-    // Pool title: # Pool: Name
-    if (trimmed.match(/^#\s+Pool:\s*(.+)/)) {
-      title = trimmed.replace(/^#\s+Pool:\s*/, '');
+    // Skip empty lines and horizontal rules
+    if (!trimmed || trimmed === '---' || trimmed.match(/^-{3,}$/)) {
       continue;
     }
     
-    // Default points: Points: N
-    if (trimmed.match(/^Points:\s*(\d+)/)) {
-      defaultPoints = parseInt(trimmed.replace(/^Points:\s*/, ''), 10);
+    // Quiz title: # Title (first h1)
+    const h1Match = trimmed.match(/^#\s+(.+)$/);
+    if (h1Match && !h1Match[1].match(/^(Multiple|True|Short|Essay|Multi)/i)) {
+      // This is the quiz title, not a section
+      if (title === 'Quiz') {
+        title = h1Match[1];
+      }
       continue;
     }
     
-    // Section: ## Section: Name
-    if (trimmed.match(/^##\s+Section:\s*(.+)/)) {
+    // Section: # Multiple Choice (10 points) or # True/False (5 points)
+    if (h1Match && h1Match[1].match(/^(Multiple|True|Short|Essay|Multi)/i)) {
       finalizeQuestion();
-      const sectionTitle = trimmed.replace(/^##\s+Section:\s*/, '');
+      inCoverPage = false; // We're past the cover page
+      
+      const sectionTitle = h1Match[1];
       currentSection = {
         id: slugify(sectionTitle),
         title: sectionTitle,
         questionIds: [],
       };
       sections.push(currentSection);
-      sectionInstructions = '';
       continue;
     }
     
-    // Horizontal rule (separator)
-    if (trimmed === '---') {
-      continue;
-    }
-    
-    // Numbered question: 1. Question text
-    const questionMatch = trimmed.match(/^(\d+)\.\s+(.+)/);
-    if (questionMatch) {
+    // Question header: ## 1. Question Title [2 pts]
+    const h2Match = trimmed.match(/^##\s+(\d+)\.\s+(.+)$/);
+    if (h2Match && !inCoverPage) {
       finalizeQuestion();
-      questionId = parseInt(questionMatch[1], 10);
       
-      const { type, points, cleanText } = parseQuestionType(questionMatch[2], currentSection?.title);
+      const questionNum = parseInt(h2Match[1], 10);
+      const { points, cleanTitle } = extractPoints(h2Match[2]);
+      const type = parseQuestionType(cleanTitle, currentSection?.title);
       
+      questionCounter++;
       currentQuestion = {
-        id: questionId,
+        id: questionNum || questionCounter,
         type,
-        stem: cleanText,
+        stem: cleanTitle,
         points: points || defaultPoints,
       };
       continue;
     }
     
-    // Answer option (indented with letter, dash, or True/False)
-    if (currentQuestion && (
-      line.match(/^\s+[*]?[a-e]\)/) || 
-      line.match(/^\s+-\s/) ||
-      line.match(/^\s+\*?(True|False)$/i)
-    )) {
-      currentOptionLines.push(line);
+    // Sub-part header: ### Part A: Title [3 pts] - treat as separate question
+    const h3Match = trimmed.match(/^###\s+Part\s+([A-D]):\s+(.+)$/i);
+    if (h3Match && currentQuestion) {
+      // Add as sub-question (treat parent as essay with sub-parts)
+      // For QTI, we'll include this as part of the parent question's stem
+      const { points, cleanTitle } = extractPoints(h3Match[2]);
+      currentQuestion.stem += `\n\n**Part ${h3Match[1].toUpperCase()}:** ${cleanTitle}`;
+      if (points) {
+        // Sub-part has its own points - this is informational
+      }
       continue;
     }
     
-    // Continuation of question stem or section instructions
-    if (currentQuestion && trimmed && !line.match(/^\s/)) {
-      currentQuestion.stem += ' ' + trimmed;
-    } else if (currentSection && trimmed && !currentQuestion) {
-      // Section-level instructions (text after section header, before questions)
-      if (!currentSection.instructions) {
-        currentSection.instructions = trimmed;
+    // Option lines (numbered or lettered)
+    if (currentQuestion && trimmed.match(/^(\d+|[a-e])\)\s+/i)) {
+      currentQuestionLines.push(trimmed);
+      continue;
+    }
+    
+    // Dash list items as options
+    if (currentQuestion && trimmed.startsWith('-')) {
+      currentQuestionLines.push(trimmed);
+      continue;
+    }
+    
+    // Question description/stem continuation (paragraph after ##)
+    if (currentQuestion && trimmed && !trimmed.startsWith('#') && !trimmed.startsWith('[') && !trimmed.startsWith('>')) {
+      // Skip LaTeX display math blocks
+      if (trimmed.startsWith('$$') || trimmed.startsWith('\\[')) {
+        // Include LaTeX in stem
+        currentQuestion.stem += '\n\n' + trimmed;
+      } else if (!trimmed.match(/^\d+\)\s/) && !trimmed.match(/^[a-e]\)/i)) {
+        // Regular description text
+        if (!currentQuestion.stem!.includes('\n')) {
+          currentQuestion.stem += '\n\n' + trimmed;
+        }
       }
+    }
+    
+    // Skip callout blocks, solution blocks, and other metadata
+    if (trimmed.startsWith('>') || trimmed.startsWith(':::') || trimmed.includes('class=')) {
+      continue;
     }
   }
   

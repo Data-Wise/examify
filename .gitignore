@@ -8,6 +8,7 @@ dist/
 # IDE
 .idea/
 .vscode/
+*.code-workspace
 *.swp
 *.swo
 
@@ -21,3 +22,8 @@ coverage/
 # Temp files
 *.log
 tmp/
+
+/.luarc.json
+
+# Scratch
+scratch/

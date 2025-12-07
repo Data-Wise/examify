@@ -1,0 +1,195 @@
+/*-- scss:defaults --*/
+
+/* Point display margins */
+$point-margin-width: 50px;
+$solution-bg: #e8f5e9;
+$solution-border: #4caf50;
+
+/*-- scss:rules --*/
+
+/* CSS Variables for exam options - can be overridden via Lua filter */
+:root {
+  --exam-font-size: 11pt;
+  --exam-section-size: 1.1em;
+  --exam-question-title-size: 1em;
+  --exam-question-title-weight: 600;
+  --exam-question-desc-size: 1em;
+  --exam-question-desc-weight: 400;
+  --exam-solution-bg: #{$solution-bg};
+  --exam-solution-border: #{$solution-border};
+}
+
+/* Base typography */
+body {
+  font-size: var(--exam-font-size);
+  line-height: 1.5;
+}
+
+/* Section headers (# = h1) */
+h1 {
+  font-size: var(--exam-section-size);
+  font-weight: bold;
+  border-bottom: 2px solid #333;
+  padding-bottom: 0.3em;
+  margin-top: 1.5em;
+  margin-bottom: 0.75em;
+}
+
+/* Question title (## = h2) - Short title with points */
+h2 {
+  font-size: var(--exam-question-title-size);
+  font-weight: var(--exam-question-title-weight);
+  margin-top: 1.5em;
+  margin-bottom: 0.4em;
+  padding-top: 0.5em;
+  border-top: 1px solid #e0e0e0;
+  color: #1a1a1a;
+}
+
+h2:first-of-type {
+  border-top: none;
+  margin-top: 0.5em;
+}
+
+/* Question description (first paragraph after h2) */
+h2 + p {
+  font-size: var(--exam-question-desc-size);
+  font-weight: var(--exam-question-desc-weight);
+  margin-top: 0.3em;
+  margin-bottom: 0.6em;
+  line-height: 1.6;
+}
+
+/* Sub-parts (### = h3) - For multi-part questions with own points */
+h3 {
+  font-size: 0.95em;
+  font-weight: 600;
+  margin-top: 1em;
+  margin-bottom: 0.3em;
+  padding-left: 0.5em;
+  border-left: 3px solid #4a90d9;
+  color: #333;
+}
+
+/* Answer choices - clean list styling */
+ul, ol {
+  margin-top: 0.4em;
+  margin-bottom: 0.6em;
+  padding-left: 1.5em;
+}
+
+li {
+  margin-bottom: 0.3em;
+  line-height: 1.5;
+}
+
+/* Correct answer styling - only shown when solutions enabled */
+.answer-correct {
+  font-weight: bold;
+  color: #2e7d32;
+}
+
+.answer-correct::after {
+  content: " ✓";
+  color: #2e7d32;
+}
+
+/* Solution blocks - styled with box and italic */
+.solution {
+  display: block;
+  background: #f5f5f5;
+  border: 1px solid #ddd;
+  border-left: 4px solid var(--exam-solution-border);
+  padding: 0.8em 1em;
+  margin: 0.8em 0;
+  border-radius: 4px;
+  font-style: italic;
+}
+
+.solution::before {
+  content: "Solution: ";
+  font-weight: bold;
+  font-style: normal;
+  color: var(--exam-solution-border);
+}
+
+/* Grading table */
+.grading-table {
+  width: 350px;
+  margin: 1.5em auto;
+  border-collapse: collapse;
+}
+
+.grading-table th,
+.grading-table td {
+  border: 1px solid #333;
+  padding: 8px 16px;
+  text-align: center;
+}
+
+.grading-table th {
+  background: #f0f0f0;
+  font-weight: bold;
+}
+
+.grading-table .total-row {
+  font-weight: bold;
+  background: #e8e8e8;
+}
+
+/* Instructions box */
+.instructions {
+  border: 1px solid #ccc;
+  padding: 1em;
+  margin: 1em 0;
+  background: #fafafa;
+  border-radius: 4px;
+}
+
+/* Cover page elements */
+.exam-header {
+  text-align: center;
+  margin-bottom: 1.5em;
+}
+
+.student-info {
+  margin: 1em 0;
+}
+
+.student-info label {
+  font-weight: bold;
+}
+
+.student-info input {
+  border: none;
+  border-bottom: 1px solid #333;
+  width: 250px;
+  margin-left: 0.5em;
+}
+
+/* Points display */
+.points {
+  float: right;
+  font-size: 0.9em;
+  color: #666;
+  font-weight: normal;
+}
+
+/* Print styles */
+@media print {
+  .no-print {
+    display: none;
+  }
+  
+  h1 {
+    page-break-before: always;
+  }
+  
+  h1:first-of-type {
+    page-break-before: avoid;
+  }
+  
+  h2 {
+    page-break-after: avoid;
+  }
+}
