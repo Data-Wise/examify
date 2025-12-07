@@ -7,6 +7,7 @@ import { join, basename, dirname, resolve } from 'path';
 import { parseMarkdown } from './parser/markdown.js';
 import { generateItem, generateTest, generateManifest21 } from './generator/qti21.js';
 import { QtiValidator } from './diagnostic/validator.js';
+import { lintMarkdown } from './diagnostic/linter.js';
 import { execSync } from 'child_process';
 
 const program = new Command();
@@ -39,6 +40,43 @@ program
       console.error('✗ Validation FAILED');
       report.errors.forEach(e => console.error(`  - ${e}`));
       process.exit(1);
+    }
+  });
+
+program
+  .command('check')
+  .alias('lint')
+  .description('Lint a Markdown/Text file for syntax errors')
+  .argument('<input>', 'Input file')
+  .action((input: string) => {
+    console.log(`Checking file: ${input}...`);
+    
+    try {
+      const content = readFileSync(input, 'utf-8');
+      const errors = lintMarkdown(content);
+      
+      if (errors.length === 0) {
+        console.log('✓ No issues found. Ready for conversion.');
+      } else {
+        const errorCount = errors.filter(e => e.severity === 'error').length;
+        const warningCount = errors.filter(e => e.severity === 'warning').length;
+        
+        console.log(`Found ${errorCount} errors and ${warningCount} warnings:\n`);
+        
+        errors.forEach(e => {
+          const icon = e.severity === 'error' ? '✗' : '!';
+          const colorFn = e.severity === 'error' ? console.error : console.warn;
+          const loc = e.line ? `Line ${e.line}: ` : '';
+          
+          colorFn(`${icon} ${loc}${e.message}`);
+          if (e.context) colorFn(`  Context: ${e.context}`);
+        });
+        
+        if (errorCount > 0) process.exit(1);
+      }
+    } catch (error) {
+       console.error(`Error reading file: ${error instanceof Error ? error.message : error}`);
+       process.exit(1);
     }
   });
 

@@ -102,7 +102,9 @@ function parseOptions(lines: string[]): AnswerOption[] {
  * Extract points from title like "Question Title [2 pts]" or "[5 pts]"
  */
 function extractPoints(title: string): { points: number | null; cleanTitle: string } {
-  const match = title.match(/\[(\d+)\s*pts?\]/i);
+  // Matches [2 pts], [2 points], \[2 pts\], etc.
+  // We handle optional backslashes before brackets
+  const match = title.match(/(?:\\\[|\[)(\d+)\s*pts?(?:\\\]|\])/i);
   if (match) {
     return {
       points: parseInt(match[1], 10),
@@ -194,7 +196,7 @@ export function parseMarkdown(content: string): ParsedQuiz {
     
     // Quiz title: # Title (first h1)
     const h1Match = trimmed.match(/^#\s+(.+)$/);
-    if (h1Match && !h1Match[1].match(/^(Multiple|True|Short|Essay|Multi)/i)) {
+    if (h1Match && !h1Match[1].match(/^(?:Section:\s*)?(Multiple|True|Short|Essay|Multi)/i)) {
       // This is the quiz title, not a section
       if (title === 'Quiz') {
         title = h1Match[1];
@@ -203,7 +205,8 @@ export function parseMarkdown(content: string): ParsedQuiz {
     }
     
     // Section: # Multiple Choice (10 points) or # True/False (5 points)
-    if (h1Match && h1Match[1].match(/^(Multiple|True|Short|Essay|Multi)/i)) {
+    // Also supports: # Section: Multiple Choice
+    if (h1Match && h1Match[1].match(/^(?:Section:\s*)?(Multiple|True|Short|Essay|Multi)/i)) {
       finalizeQuestion();
       inCoverPage = false; // We're past the cover page
       
@@ -219,7 +222,8 @@ export function parseMarkdown(content: string): ParsedQuiz {
     
     // Question header: ## 1. Question Title [2 pts]
     const h2Match = trimmed.match(/^##\s+(\d+)\.\s+(.+)$/);
-    if (h2Match && !inCoverPage) {
+    if (h2Match) {
+      if (inCoverPage) inCoverPage = false; // Auto-start questions if we hit a question header
       finalizeQuestion();
       
       const questionNum = parseInt(h2Match[1], 10);
