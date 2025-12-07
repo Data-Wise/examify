@@ -2,9 +2,9 @@
 
 <div align="center">
 
-[![CI](https://github.com/Data-Wise/canvas-qti-converter/actions/workflows/ci.yml/badge.svg)](https://github.com/Data-Wise/canvas-qti-converter/actions/workflows/ci.yml)
-[![License](https://img.shields.io/github/license/Data-Wise/canvas-qti-converter?style=flat-square)](LICENSE)
-[![GitHub release](https://img.shields.io/github/v/release/Data-Wise/canvas-qti-converter?style=flat-square)](https://github.com/Data-Wise/canvas-qti-converter/releases)
+![Version](https://img.shields.io/badge/version-0.2.2-blue)
+![License](https://img.shields.io/badge/license-MIT-green)
+![Node](https://img.shields.io/badge/node-%3E%3D18-brightgreen)
 
 **Convert Markdown questions to Canvas-compatible QTI 2.1 packages**
 
