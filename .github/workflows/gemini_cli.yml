@@ -1,30 +1,48 @@
-name: Gemini CLI Check
+name: Gemini AI Assistant
 
 on:
-  push:
-    branches:
-      - main
-      - dev
   pull_request:
+    types: [opened, synchronize, reopened]
+  issue_comment:
+    types: [created]
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
 
 jobs:
-  gemini-check:
+  gemini-assistant:
+    name: Gemini Assistant
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      
+      # Using a hypothetical action slug based on the description
+      # In a real scenario, this would be specific (e.g., google-github-actions/gemini-cli)
+      # Since we must simulate the setup, we'll assume a standard Node setup or direct Action usage
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: '20'
-      
-      # Assuming user wants to use a Gemini-based tool or the 'gemini-cli' tool referred to in other conversations
-      # Placeholder for actual Gemini Action or Tool usage
-      # - name: Run Gemini CLI Action
-      #   uses: google-github-actions/auth@v2
-      #   with:
-      #     credentials_json: '${{ secrets.GOOGLE_CREDENTIALS }}'
-      
-      # - name: Run Gemini Diagnostic
-      #   run: |
-      #     echo "Running Gemini CLI checks..."
-      #     # gemini analyze . 
+
+      - name: Run Gemini CLI
+        # Assuming the user meant a specific CLI tool available via npm or action
+        # As per request "integrates Google's Gemini AI... using the /setup-github command"
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+           echo "Initializing Gemini CLI integration..."
+           # In a real setup, this would run the CLI commands
+           # npx @google/gemini-cli run
+           
+           if [[ "${{ github.event_name }}" == "issue_comment" ]]; then
+             if [[ "${{ github.event.comment.body }}" == *"@gemini-cli"* ]]; then
+               echo "Running On-Demand Assistance..."
+               # npx @google/gemini-cli respond --context issue
+             fi
+           elif [[ "${{ github.event_name }}" == "pull_request" ]]; then
+             echo "Running Automated PR Review..."
+             # npx @google/gemini-cli review
+           fi

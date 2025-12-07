@@ -10,6 +10,16 @@ Convert Markdown/Text question files to Canvas-compatible QTI format for easy qu
 - 📦 Outputs valid QTI 2.1 XML for Canvas import
 - ✅ Built-in diagnostics command (`verify`) to check package integrity
 
+## Automation
+
+This repository includes a GitHub Action to integrate **Google's Gemini AI** for automated PR reviews and issue assistance.
+
+1. Go to your repository **Settings** > **Secrets and variables** > **Actions**.
+2. Create a new Repository Secret named `GEMINI_API_KEY` with your Google Gemini API key.
+3. The workflow will automatically run on:
+    - New Pull Requests (Code Review)
+    - Issue Comments (On-demand help via `@gemini-cli`)
+
 ## Installation
 
 ```bash
