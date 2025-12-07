@@ -1,5 +1,11 @@
 # Canvas QTI Converter
 
+<p align="center">
+  <img src="https://img.shields.io/badge/version-0.2.2-blue" alt="Version">
+  <img src="https://img.shields.io/badge/license-MIT-green" alt="License">
+  <img src="https://img.shields.io/badge/node-%3E%3D18-brightgreen" alt="Node">
+</p>
+
 <div class="feature-card" markdown>
 **🚀 Convert Markdown questions to Canvas-compatible QTI in seconds**
 
