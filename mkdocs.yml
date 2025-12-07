@@ -103,6 +103,9 @@ nav:
   - User Guide:
     - Input Formats: formats.md
     - Canvas Emulator: emulator.md
+  - Tutorials:
+    - R & Quarto: tutorials/quarto.md
+    - Best Practices: tutorials/best-practices.md
   - Development:
     - Contributing: contributing.md
     - API Reference: reference.md
