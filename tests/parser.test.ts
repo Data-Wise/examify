@@ -272,5 +272,25 @@ c) R is a database
     expect(q.options[1].text).not.toContain('[correct]');
     expect(q.options[0].isCorrect).toBe(false);
   });
+  // NEW: Test for Short Answer text extraction provided in stem
+  it('should extract Short Answer text defined in stem', () => {
+    const input = `
+# Quiz
+## 1. [Short] Capital City
+The capital of France is...
+
+Answer: Paris
+    `;
+    const result = parseMarkdown(input);
+    const q = result.questions[0];
+
+    expect(q.type).toBe('short_answer');
+    expect(q.options).toHaveLength(1);
+    expect(q.options[0].text).toBe('Paris');
+    expect(q.options[0].isCorrect).toBe(true);
+    // Ensure "Answer: Paris" is stripped from the displayed stem
+    expect(q.stem).not.toContain('Answer: Paris');
+    expect(q.stem).toContain('The capital of France is...');
+  });
 });
 
