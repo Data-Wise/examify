@@ -194,6 +194,11 @@ export function parseMarkdown(content: string): ParsedQuiz {
       continue;
     }
     
+    // Skip callout blocks, solution blocks, and other metadata (checked early to exclude from stem)
+    if (trimmed.startsWith('>') || trimmed.startsWith(':::') || trimmed.includes('class=')) {
+      continue;
+    }
+
     // Quiz title: # Title (first h1)
     const h1Match = trimmed.match(/^#\s+(.+)$/);
     if (h1Match && !h1Match[1].match(/^(?:Section:\s*)?(Multiple|True|Short|Essay|Multi)/i)) {
@@ -279,10 +284,7 @@ export function parseMarkdown(content: string): ParsedQuiz {
       }
     }
     
-    // Skip callout blocks, solution blocks, and other metadata
-    if (trimmed.startsWith('>') || trimmed.startsWith(':::') || trimmed.includes('class=')) {
-      continue;
-    }
+
   }
   
   // Finalize last question
