@@ -155,6 +155,8 @@ contributes:
       variant: gfm
       filters:
         - exam-filter.lua
+      post-render:
+        - qti-post-render.js
       exam:
         solutions: false
         # Include answer markers for QTI parsing

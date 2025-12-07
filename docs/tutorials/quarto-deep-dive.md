@@ -37,6 +37,7 @@ project:
 
 format:
   exam-gfm: 
+    qti-export: true  # <--- REQUIRED to generate QTI zip
     exam:
       default-points: 1
       shuffle-answers: true

@@ -27,6 +27,26 @@ const dir = dirname(inputFile);
 const base = basename(inputFile, '.md');
 const outputFile = join(dir, `${base}.qti.zip`);
 
+// Check for opt-in flag in frontmatter
+const content = readFileSync(inputFile, 'utf8');
+const yamlMatch = content.match(/^---\n([\s\S]*?)\n---/);
+
+// Default to FALSE. Only run if explicitly enabled.
+let shouldRun = false;
+
+if (yamlMatch) {
+  const yaml = yamlMatch[1];
+  // Simple regex check for "qti-export: true" or "qti: true"
+  if (yaml.match(/qti-export:\s*true/) || yaml.match(/qti:\s*true/)) {
+    shouldRun = true;
+  }
+}
+
+if (!shouldRun) {
+  console.log('ℹ️ QTI generation skipped. Add `qti-export: true` to YAML to enable.');
+  process.exit(0);
+}
+
 try {
   // Use the qti-convert CLI from this package
   const cliPath = join(dirname(import.meta.url.replace('file://', '')), '..', 'dist', 'index.js');
