@@ -11,7 +11,9 @@
     "build": "tsup src/index.ts --format esm --dts",
     "dev": "tsup src/index.ts --format esm --watch",
     "start": "node dist/index.js",
-    "test": "vitest"
+    "test": "vitest",
+    "version": "bun scripts/sync-version.ts && git add -A",
+    "postversion": "git push && git push --tags"
   },
   "keywords": ["canvas", "qti", "quiz", "lms", "education", "converter"],
   "author": "",
