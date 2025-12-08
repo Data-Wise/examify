@@ -8,8 +8,8 @@
 
 [![Version](https://img.shields.io/badge/Examify-v0.4.2-7C3AED?style=for-the-badge&logo=markdown&logoColor=white)](https://github.com/Data-Wise/examify/releases)
 [![License](https://img.shields.io/badge/license-MIT-22C55E?style=for-the-badge)](LICENSE)
-[![Tests](https://img.shields.io/badge/tests-35%20passing-3178C6?style=for-the-badge)](https://github.com/Data-Wise/examify/actions)
-[![Security](https://img.shields.io/badge/Security-Hardened-blueviolet?style=for-the-badge)](https://data-wise.github.io/examify/emulator/)
+[![Tests](https://img.shields.io/badge/tests-48%20passing-3178C6?style=for-the-badge)](https://github.com/Data-Wise/examify/actions)
+[![Docs](https://img.shields.io/badge/docs-online-6366f1?style=for-the-badge)](https://data-wise.github.io/examify/)
 
 </div>
 
@@ -26,14 +26,14 @@
 
 ## ⚡ The Ecosystem
 
-Examify isn't just a converter; it's a complete workflow for modern assessment authoring.
+Examify isn't just a converter — it's a complete workflow for modern assessment authoring.
 
 | **Examify CLI** | **Quarto Extension** |
 |:---:|:---:|
 | 💻 **For Developers & Authors** | 🧪 **For Data Scientists** |
 | Convert any Markdown file to QTI. | Author in `.qmd` with R/Python code. |
-| Automated image bundling. | Seamless render-to-exam workflow. |
-| `examify quiz.md` | `quarto render exam.qmd` |
+| Automated image bundling. | Dynamic, randomized questions. |
+| `examify quiz.md -o quiz.qti.zip` | `quarto render exam.qmd` |
 
 ---
 
@@ -45,7 +45,7 @@ Examify isn't just a converter; it's a complete workflow for modern assessment a
 
 ### 📝 Markdown First
 
-Write questions in specific, clean Markdown. No XML, no GUI clicking. Focus on your content.
+Write questions in simple, clean Markdown. No XML, no GUI clicking. Focus on your content.
 
 </td>
 <td width="50%">
@@ -83,9 +83,9 @@ Built-in protection against XSS and path traversal. We sanitize every input to e
 </td>
 <td width="50%">
 
-### 🎲 Deterministic
+### 🎯 6 Question Types
 
-Reproducible builds by default. Our content-based hashing ensures that re-running `examify` on the same file produces the exact same QTI package.
+Multiple choice, true/false, multiple answer, short answer, essay, and numeric. All Canvas-compatible.
 
 </td>
 </tr>
@@ -98,7 +98,6 @@ Reproducible builds by default. Our content-based hashing ensures that re-runnin
 ### 1. Installation
 
 ```bash
-# Clone and link (Recommended for now)
 git clone https://github.com/Data-Wise/examify.git
 cd examify
 npm install && npm run build && npm link
@@ -106,17 +105,23 @@ npm install && npm run build && npm link
 
 ### 2. Create Your Exam
 
-Write your questions in `exam.md`:
+Use a template or write from scratch:
 
 ```markdown
+# Statistics Quiz
+
 # Section: Multiple Choice
 
 ## 1. Which statistical test compares two means? [2 pts]
+
 a) Chi-Square
 b) **T-Test** ✓
 c) ANOVA
+d) Regression
 
-## 2. [Essay, 10pts] Explain P-Values.
+## 2. [TF] Correlation implies causation. → False
+
+## 3. [Essay, 10pts] Explain the Central Limit Theorem.
 ```
 
 ### 3. Convert & Verify
@@ -125,13 +130,27 @@ c) ANOVA
 # Generate QTI Package
 examify exam.md -o exam.qti.zip
 
-# Check compatibility (Optional)
+# Simulate Canvas import
 examify emulate-canvas exam.qti.zip
 ```
 
 ### 4. Import to Canvas
 
-Upload `exam.qti.zip` to **Settings > Import Course Content > QTI .zip file**.
+Upload `exam.qti.zip` to **Settings → Import Course Content → QTI .zip file**.
+
+---
+
+## 📋 Templates
+
+Start with a ready-made template:
+
+| Template | Questions | Best For |
+|:---|:---:|:---|
+| [`starter-exam-md.md`](examples/starter-exam-md.md) | 7 | Beginners — one of each question type |
+| [`canvas-ready.md`](examples/canvas-ready.md) | 21 | Full feature coverage with math & code |
+| [`canvas-validation.md`](examples/canvas-validation.md) | 9 | Testing all features |
+
+**Quarto users:** See [`starter-exam.qmd`](examples/starter-exam.qmd) and [`canvas-export.qmd`](examples/canvas-export.qmd).
 
 ---
 
@@ -151,9 +170,11 @@ title: "Final Exam"
 format:
   exam-gfm: default  # Generates QTI-ready Markdown
   exam-pdf: default  # Generates printable PDF
+exam:
+  solutions: false   # Hide solutions for students
 ```
 
-[Read the Quarto Guide →](https://data-wise.github.io/examify/extensions/quarto/)
+📖 [Read the Quarto Guide →](https://data-wise.github.io/examify/extensions/quarto/)
 
 ---
 
@@ -161,10 +182,21 @@ format:
 
 | Command | Usage | Description |
 |:---|:---|:---|
-| **Convert** | `examify <file> [options]` | Main conversion tool. |
-| **Verify** | `examify verify <zip>` | Validates QTI structure and manifests. |
-| **Emulate** | `examify emulate-canvas <zip>` | Simulates Canvas import process. |
-| **Check** | `examify check <file>` | Lints source file for syntax errors. |
+| **Convert** | `examify <file> -o <out.zip>` | Convert Markdown to QTI package |
+| **Verify** | `examify verify <zip>` | Validate QTI structure |
+| **Emulate** | `examify emulate-canvas <zip>` | Simulate Canvas import |
+| **Check** | `examify check <file>` | Lint source file for errors |
+| **Preview** | `examify <file> --preview` | Preview parsed questions |
+
+---
+
+## 📚 Documentation
+
+- [**Getting Started**](https://data-wise.github.io/examify/getting-started/) — Install and convert your first exam
+- [**Input Formats**](https://data-wise.github.io/examify/formats/) — Complete question syntax reference
+- [**Canvas Emulator**](https://data-wise.github.io/examify/emulator/) — Pre-validate before uploading
+- [**Quarto Extension**](https://data-wise.github.io/examify/extensions/quarto/) — R/Python integration
+- [**Tutorials**](https://data-wise.github.io/examify/tutorials/) — Dynamic exams, VS Code snippets
 
 ---
 
