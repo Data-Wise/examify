@@ -8,6 +8,7 @@ Examify converts Markdown exam files to QTI 1.2 packages for Canvas LMS import.
 
 - **Repo**: Data-Wise/examify
 - **Docs**: https://data-wise.github.io/examify/
+- **Version**: 0.4.2 | **Tests**: 188 passing
 - **Distribution**: npm (`examify`), Homebrew (`data-wise/tap/examify`)
 
 ## Build & Test Commands
@@ -200,7 +201,8 @@ src/
 │   ├── markdown.ts       # parseMarkdown() - converts MD to ParsedQuiz
 │   └── types.ts          # Question, AnswerOption, ParsedQuiz types
 ├── generator/
-│   └── qti.ts            # generateQTI() - produces QTI 1.2 XML for Canvas
+│   ├── qti.ts            # generateQTI() - produces QTI 1.2 XML for Canvas
+│   └── text.ts           # generateText() - produces plain text for printing
 └── diagnostic/
     ├── validator.ts      # QtiValidator class - validates QTI packages
     └── linter.ts         # lintMarkdown() - checks MD for errors before conversion
@@ -276,7 +278,7 @@ Two validation stages:
 
 | Error | Cause | Fix |
 |-------|-------|-----|
-| "No questions found" | Missing `## N.` headers | Ensure questions start with `## 1.`, `## 2.`, etc. |
+| "No questions found" | Missing question format | Use `## 1.` or `1. [Type]` with type marker/points |
 | "No correct answer" | Missing answer marker | Add `[x]`, `**bold**`, or `✓` to correct option |
 | Build fails | TypeScript errors | Check imports use `.js` extension |
 
@@ -289,9 +291,10 @@ Two validation stages:
 
 ## Testing Notes
 
-Tests use Vitest. Test files mirror source structure:
-- `tests/parser.test.ts` - Markdown parsing
+Tests use Vitest (188 tests). Test files mirror source structure:
+- `tests/parser.test.ts` - Markdown parsing (38 tests)
 - `tests/generator.test.ts` - QTI XML generation
+- `tests/text-generator.test.ts` - Plain text export
 - `tests/validator.test.ts` - Package validation
 - `tests/linter.test.ts` - Markdown linting
 - `tests/config.test.ts` - Config file loading
