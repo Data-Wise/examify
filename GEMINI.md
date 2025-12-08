@@ -6,7 +6,7 @@
 - **Purpose**: Create exams from Markdown and export to Canvas QTI format
 - **Documentation**: <https://data-wise.github.io/examify/>
 - **Version**: 0.4.0 (released 2025-12-07)
-- **Status**: ✅ Stable - All 32 tests passing
+- **Status**: ✅ Stable - All 35 tests passing
 
 ## Quick Start
 
@@ -39,7 +39,7 @@ examify emulate-canvas package.qti.zip
 ```bash
 npm install      # Install dependencies
 npm run build    # Build project
-npm test         # Run all tests (32 tests)
+npm test         # Run all tests (35 tests)
 npm link         # Install globally as 'examify'
 ```
 
@@ -61,6 +61,29 @@ src/
 ├── diagnostic/           # Validator + Canvas emulator
 └── utils/                # Shared utilities
 ```
+
+## Documentation Structure
+
+Follows Data-Wise MkDocs standards (claude-r-dev pattern):
+
+```
+docs/
+├── index.md              # Homepage with features
+├── getting-started.md    # Installation + first steps
+├── reference.md          # Commands Reference
+├── formats.md            # Input syntax guide
+├── emulator.md           # Canvas emulator
+├── troubleshooting.md    # Common issues
+├── contributing.md       # Contribution guide
+├── tutorials/
+│   ├── index.md          # Tutorial overview
+│   ├── quarto.md         # R/Quarto integration
+│   └── vscode-snippets.md
+└── extensions/
+    └── quarto.md         # Quarto extension docs
+```
+
+**Theme**: Material with indigo/purple colors, flat navigation.
 
 ## Input Format
 
@@ -89,17 +112,6 @@ Questions MUST use `## N. Question` format (with ##):
 - `*` prefix (e.g., `*a) Answer`)
 - `→ True` or `→ False` for T/F questions
 
-### Images
-
-```markdown
-## 1. What does this chart show?
-
-![Chart](assets/chart.png)
-
-*a) Linear growth
-b)  Exponential growth
-```
-
 ## Question Types
 
 | Type | Syntax |
@@ -121,21 +133,7 @@ b)  Exponential growth
 | `examples/` | Sample input files |
 | `scratch/` | Generated test QTI files (always output here) |
 | `tests/` | Vitest test suite |
-| `_extensions/` | Quarto extension (future integration) |
-
-## Canvas Import Process
-
-1. Course → Settings → Import Course Content
-2. Content Type: QTI .zip file
-3. Upload .qti.zip file
-4. Import → Check Quizzes → Manage Question Banks
-
-## Recent Changes (v0.4.0)
-
-- ✅ Image bundling with `imsmanifest.xml`
-- ✅ Canvas emulator validates QTI 1.2 packages
-- ✅ Project renamed from `canvas-qti-converter` to `examify`
-- ✅ Full documentation site at data-wise.github.io/examify
+| `_extensions/` | Quarto extension |
 
 ## Workflows Available
 
