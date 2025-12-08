@@ -1,12 +1,33 @@
 # Examify
 
+<div class="grid" markdown>
+
+<div markdown>
+
 **Create exams from Markdown and export to Canvas QTI format.**
 
-[![Version](https://img.shields.io/badge/version-0.4.2-6366f1?style=for-the-badge)](https://github.com/Data-Wise/examify/releases)
-[![License](https://img.shields.io/badge/license-MIT-22C55E?style=for-the-badge)](https://github.com/Data-Wise/examify/blob/main/LICENSE)
-[![Node](https://img.shields.io/badge/node-≥18-3178C6?style=for-the-badge)](https://nodejs.org/)
-[![npm](https://img.shields.io/npm/v/examify?style=for-the-badge&logo=npm&color=CB3837)](https://www.npmjs.com/package/examify)
-[![Tests](https://img.shields.io/badge/tests-87_passing-22C55E?style=for-the-badge)](https://github.com/Data-Wise/examify/actions)
+Write questions in simple Markdown, add correct answer markers, and generate Canvas-ready QTI packages. Built-in Canvas emulator catches errors before you upload.
+
+[Get Started :material-arrow-right:](getting-started.md){ .md-button .md-button--primary }
+[View on GitHub :material-github:](https://github.com/Data-Wise/examify){ .md-button }
+
+</div>
+
+<div class="badge-sidebar" markdown>
+
+[![npm](https://img.shields.io/npm/v/examify?style=flat-square&logo=npm&color=CB3837)](https://www.npmjs.com/package/examify)
+
+[![CI](https://img.shields.io/github/actions/workflow/status/Data-Wise/examify/ci.yml?style=flat-square&logo=github&label=CI)](https://github.com/Data-Wise/examify/actions/workflows/ci.yml)
+
+[![Docs](https://img.shields.io/github/actions/workflow/status/Data-Wise/examify/publish_docs.yml?style=flat-square&logo=github&label=Docs)](https://github.com/Data-Wise/examify/actions/workflows/publish_docs.yml)
+
+[![License](https://img.shields.io/badge/license-MIT-22C55E?style=flat-square)](https://github.com/Data-Wise/examify/blob/main/LICENSE)
+
+[![Node](https://img.shields.io/badge/node-≥18-3178C6?style=flat-square)](https://nodejs.org/)
+
+</div>
+
+</div>
 
 ---
 
@@ -64,9 +85,6 @@ npx examify quiz.md -o quiz.qti.zip
 npm install -g examify
 examify quiz.md -o quiz.qti.zip
 ```
-
-[Get Started :material-arrow-right:](getting-started.md){ .md-button .md-button--primary }
-[View on GitHub :material-github:](https://github.com/Data-Wise/examify){ .md-button }
 
 ---
 

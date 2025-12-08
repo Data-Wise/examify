@@ -127,14 +127,14 @@ describe('Documentation Website Tests', () => {
       expect(content).toContain('Quick Start');
     });
 
-    it('should have correct version badge', () => {
+    it('should have npm badge', () => {
       const content = readFileSync(join(docsDir, 'index.md'), 'utf-8');
-      expect(content).toContain('0.4.2');
+      expect(content).toContain('img.shields.io/npm/v/examify');
     });
 
-    it('should have correct test count badge', () => {
+    it('should have CI status badge', () => {
       const content = readFileSync(join(docsDir, 'index.md'), 'utf-8');
-      expect(content).toContain('87');
+      expect(content).toContain('ci.yml');
     });
 
     it('should have workflow diagram', () => {
