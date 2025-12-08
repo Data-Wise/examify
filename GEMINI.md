@@ -166,6 +166,20 @@ If docs aren't updating after push to `main`:
 3. **Hard refresh** - Cmd+Shift+R (Mac) / Ctrl+Shift+R (Windows)
 4. **Manual deploy** - Actions → Publish Docs → Run workflow
 
+## Monitoring Actions (via API)
+
+When asked to "monitor actions", use these commands instead of browser:
+
+```bash
+# Quick status check
+curl -s "https://api.github.com/repos/Data-Wise/examify/actions/workflows/publish_docs.yml/runs?per_page=1" | \
+  jq '.workflow_runs[0] | {run: .run_number, status: .conclusion, commit: .head_sha[:7]}'
+
+# All recent workflow runs
+curl -s "https://api.github.com/repos/Data-Wise/examify/actions/runs?per_page=5" | \
+  jq '.workflow_runs[] | {name: .name, status: .conclusion, commit: .head_sha[:7]}'
+```
+
 ## Git Status
 
 - **Branch**: dev

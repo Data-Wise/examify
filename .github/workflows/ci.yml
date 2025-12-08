@@ -21,6 +21,16 @@ jobs:
         with:
           bun-version: latest
 
+      - name: Setup Python (for MkDocs)
+        uses: actions/setup-python@v5
+        with:
+          python-version: 3.x
+          cache: 'pip'
+          cache-dependency-path: '**/mkdocs.yml'
+
+      - name: Install MkDocs
+        run: pip install mkdocs-material
+
       - name: Install dependencies
         run: bun install
 
