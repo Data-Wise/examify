@@ -1,0 +1,32 @@
+# Source files (TypeScript)
+src/
+
+# Tests
+tests/
+
+# Documentation
+docs/
+site/
+
+# Examples
+examples/
+
+# Quarto extension
+_extensions/
+
+# Development files
+scratch/
+*.md
+!README.md
+tsconfig.json
+mkdocs.yml
+bun.lockb
+.github/
+
+# IDE
+.vscode/
+.idea/
+
+# Gemini
+.agent/
+GEMINI.md

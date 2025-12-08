@@ -95,12 +95,23 @@ Multiple choice, true/false, multiple answer, short answer, essay, and numeric. 
 
 ## 🚀 Quick Start
 
-### 1. Installation
+### Option 1: No Install (npx)
+
+```bash
+npx examify quiz.md -o quiz.qti.zip
+```
+
+### Option 2: Global Install
+
+```bash
+npm install -g examify
+```
+
+### Option 3: Developer Install
 
 ```bash
 git clone https://github.com/Data-Wise/examify.git
-cd examify
-npm install && npm run build && npm link
+cd examify && npm install && npm run build && npm link
 ```
 
 ### 2. Create Your Exam

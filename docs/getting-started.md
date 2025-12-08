@@ -1,33 +1,46 @@
 # Getting Started
 
-Get up and running with Examify in 5 minutes.
-
----
-
-## Prerequisites
-
-- **Node.js 18+** — [Download](https://nodejs.org/)
-- **npm** — Included with Node.js
+Get up and running with Examify in minutes.
 
 ---
 
 ## Installation
 
-=== "Git Clone (Recommended)"
+### Quick Start (No Install Needed)
+
+Run directly without installing:
+
+```bash
+npx examify quiz.md -o quiz.qti.zip
+```
+
+This downloads and runs Examify on-demand. Perfect for trying it out!
+
+---
+
+### Permanent Install
+
+=== "npm (Mac/Linux/Windows)"
+
+    ```bash
+    npm install -g examify
+    ```
+    
+    Requires [Node.js 18+](https://nodejs.org/).
+
+=== "Developer"
 
     ```bash
     git clone https://github.com/Data-Wise/examify.git
     cd examify
-    npm install
-    npm run build
-    npm link
+    npm install && npm run build && npm link
     ```
 
-=== "Manual Download"
+### Verify Installation
 
-    1. Download from [GitHub Releases](https://github.com/Data-Wise/examify/releases)
-    2. Extract and navigate to the folder
-    3. Run `npm install && npm run build && npm link`
+```bash
+examify --version
+```
 
 ---
 
@@ -44,9 +57,9 @@ Create `quiz.md`:
 
 ## 1. What is 2 + 2?
 
-1)  Three
-2)  **Four** ✓
-3)  Five
+a) Three
+b) **Four** ✓
+c) Five
 
 ## 2. [TF] The sky is blue. → True
 
@@ -89,14 +102,16 @@ Output:
 
 ---
 
-## Verification
+## Templates
 
-Confirm Examify is working:
+Start with a ready-made template:
 
-```bash
-examify --version
-examify --help
-```
+| Template | Questions | Best For |
+|----------|-----------|----------|
+| [`starter-exam-md.md`](https://github.com/Data-Wise/examify/blob/main/examples/starter-exam-md.md) | 7 | Beginners |
+| [`canvas-ready.md`](https://github.com/Data-Wise/examify/blob/main/examples/canvas-ready.md) | 21 | Full feature coverage |
+
+**Quarto users:** See the [Quarto Extension](extensions/quarto.md) for `.qmd` templates.
 
 ---
 
@@ -107,20 +122,6 @@ examify --help
 3. Upload your `.qti.zip` file
 4. Click **Import**
 5. Navigate to **Quizzes** → **Manage Question Banks**
-
----
-
-## Templates
-
-Start with a ready-made template:
-
-| Template | Best For |
-|----------|----------|
-| [`starter-exam-md.md`](https://github.com/Data-Wise/examify/blob/main/examples/starter-exam-md.md) | Beginners - one example of each question type |
-| [`canvas-ready.md`](https://github.com/Data-Wise/examify/blob/main/examples/canvas-ready.md) | Full Canvas feature coverage |
-| [`canvas-validation.md`](https://github.com/Data-Wise/examify/blob/main/examples/canvas-validation.md) | Testing all features |
-
-**Quarto users:** See the [Quarto Extension](extensions/quarto.md) for `.qmd` templates.
 
 ---
 

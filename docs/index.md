@@ -5,6 +5,7 @@
 [![Version](https://img.shields.io/badge/version-0.4.2-6366f1?style=for-the-badge)](https://github.com/Data-Wise/examify/releases)
 [![License](https://img.shields.io/badge/license-MIT-22C55E?style=for-the-badge)](https://github.com/Data-Wise/examify/blob/main/LICENSE)
 [![Node](https://img.shields.io/badge/node-≥18-3178C6?style=for-the-badge)](https://nodejs.org/)
+[![npm](https://img.shields.io/npm/v/examify?style=for-the-badge&logo=npm&color=CB3837)](https://www.npmjs.com/package/examify)
 [![Tests](https://img.shields.io/badge/tests-87_passing-22C55E?style=for-the-badge)](https://github.com/Data-Wise/examify/actions)
 
 ---
@@ -56,16 +57,12 @@
 ## 🚀 Quick Start
 
 ```bash
-# Clone and install
-git clone https://github.com/Data-Wise/examify.git
-cd examify
-npm install && npm run build && npm link
+# No install needed!
+npx examify quiz.md -o quiz.qti.zip
 
-# Convert your first quiz
+# Or install globally
+npm install -g examify
 examify quiz.md -o quiz.qti.zip
-
-# Verify before upload
-examify emulate-canvas quiz.qti.zip
 ```
 
 [Get Started :material-arrow-right:](getting-started.md){ .md-button .md-button--primary }

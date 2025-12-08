@@ -7,17 +7,44 @@
     "examify": "dist/index.js"
   },
   "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Data-Wise/examify.git"
+  },
+  "homepage": "https://data-wise.github.io/examify/",
+  "bugs": {
+    "url": "https://github.com/Data-Wise/examify/issues"
+  },
+  "author": "Data-Wise",
+  "license": "MIT",
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "keywords": [
+    "canvas",
+    "qti",
+    "quiz",
+    "exam",
+    "lms",
+    "education",
+    "converter",
+    "markdown",
+    "quarto"
+  ],
   "scripts": {
     "build": "tsup src/index.ts --format esm --dts",
     "dev": "tsup src/index.ts --format esm --watch",
     "start": "node dist/index.js",
     "test": "vitest",
+    "prepublishOnly": "npm run build",
     "version": "bun scripts/sync-version.ts && git add -A",
     "postversion": "git push && git push --tags"
   },
-  "keywords": ["canvas", "qti", "quiz", "lms", "education", "converter"],
-  "author": "",
-  "license": "MIT",
   "devDependencies": {
     "@types/node": "^20.10.0",
     "tsup": "^8.0.1",
