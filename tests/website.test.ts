@@ -134,7 +134,7 @@ describe('Documentation Website Tests', () => {
 
     it('should have correct test count badge', () => {
       const content = readFileSync(join(docsDir, 'index.md'), 'utf-8');
-      expect(content).toContain('48');
+      expect(content).toContain('87');
     });
 
     it('should have workflow diagram', () => {

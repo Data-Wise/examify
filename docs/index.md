@@ -5,7 +5,7 @@
 [![Version](https://img.shields.io/badge/version-0.4.2-6366f1?style=for-the-badge)](https://github.com/Data-Wise/examify/releases)
 [![License](https://img.shields.io/badge/license-MIT-22C55E?style=for-the-badge)](https://github.com/Data-Wise/examify/blob/main/LICENSE)
 [![Node](https://img.shields.io/badge/node-≥18-3178C6?style=for-the-badge)](https://nodejs.org/)
-[![Tests](https://img.shields.io/badge/tests-48_passing-22C55E?style=for-the-badge)](https://github.com/Data-Wise/examify/actions)
+[![Tests](https://img.shields.io/badge/tests-87_passing-22C55E?style=for-the-badge)](https://github.com/Data-Wise/examify/actions)
 
 ---
 
