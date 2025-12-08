@@ -5,17 +5,30 @@
 - **Location**: `/Users/dt/dev-tools/examify`
 - **Purpose**: Create exams from Markdown and export to Canvas QTI format
 - **Documentation**: <https://data-wise.github.io/examify/>
-- **Version**: 0.4.0 (released 2025-12-07)
-- **Status**: ✅ Stable - All 35 tests passing
+- **Version**: 0.4.2 (released 2025-12-08)
+- **Status**: ✅ Stable - All 132 tests passing
+- **Distribution**: npm (examify), Homebrew (data-wise/tap/examify)
 
 ## Quick Start
 
-```bash
-# Install globally
-npm link
+### Installation
 
+```bash
+# Option 1: No Install
+npx examify quiz.md -o quiz.qti.zip
+
+# Option 2: Mac (Homebrew)
+brew tap data-wise/tap && brew install examify
+
+# Option 3: Global Install (npm)
+npm install -g examify
+```
+
+### Usage
+
+```bash
 # Convert markdown to QTI
-examify input.md -o scratch/output.qti.zip
+examify input.md -o output.qti.zip
 
 # Verify QTI package
 examify verify package.qti.zip
@@ -28,7 +41,7 @@ examify emulate-canvas package.qti.zip
 
 | Command | Description |
 |---------|-------------|
-| `examify <file> -o <out.qti.zip>` | Convert Markdown to QTI |
+| `examify <file> -o <out.zip>` | Convert Markdown to QTI |
 | `examify verify <pkg>` | Validate QTI package structure |
 | `examify emulate-canvas <pkg>` | Simulate Canvas import |
 | `examify <file> --preview` | Preview parsed questions |
@@ -39,7 +52,7 @@ examify emulate-canvas package.qti.zip
 ```bash
 npm install      # Install dependencies
 npm run build    # Build project
-npm test         # Run all tests (35 tests)
+npm test         # Run all tests (132 tests)
 npm link         # Install globally as 'examify'
 ```
 
@@ -147,5 +160,4 @@ Questions MUST use `## N. Question` format (with ##):
 ## Git Status
 
 - **Branch**: dev
-- **Latest tag**: v0.4.0
 - **Remote**: origin/dev (active)
