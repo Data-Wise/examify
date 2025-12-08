@@ -8,7 +8,7 @@ Get up and running with Examify in minutes.
 
 ### Quick Start (No Install Needed)
 
-Run directly without installing:
+Run Examify directly using npx (requires Node.js):
 
 ```bash
 npx examify quiz.md -o quiz.qti.zip
@@ -22,14 +22,16 @@ This downloads and runs Examify on-demand. Perfect for trying it out!
 
 === "Mac (Homebrew)"
 
+    **Recommended for Mac users:**
+
     ```bash
     brew tap data-wise/tap
     brew install examify
     ```
     
-    Homebrew handles Node.js dependency automatically.
+    Homebrew handles the Node.js dependency automatically.
 
-=== "npm (Mac/Linux/Windows)"
+=== "Mac/Linux (npm)"
 
     ```bash
     npm install -g examify
@@ -37,12 +39,32 @@ This downloads and runs Examify on-demand. Perfect for trying it out!
     
     Requires [Node.js 18+](https://nodejs.org/).
 
+=== "Windows"
+
+    **Step 1:** Install [Node.js](https://nodejs.org/) (version 18 or higher)
+    
+    **Step 2:** Open Command Prompt or PowerShell and run:
+
+    ```powershell
+    npm install -g examify
+    ```
+
+    **Step 3:** Verify installation:
+
+    ```powershell
+    examify --version
+    ```
+
 === "Developer"
+
+    For contributing or modifying the source:
 
     ```bash
     git clone https://github.com/Data-Wise/examify.git
     cd examify
-    npm install && npm run build && npm link
+    npm install
+    npm run build
+    npm link
     ```
 
 ### Verify Installation
