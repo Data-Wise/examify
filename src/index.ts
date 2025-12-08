@@ -237,7 +237,6 @@ program
   <resources>
     <resource identifier="QTI_RESOURCE" type="imsqti_xmlv1p2" href="${qtiFilename}">
       <file href="${qtiFilename}"/>
-${bundledImages.map((_, i) => `      <dependency identifierref="IMG_${i}"/>`).join('\n')}
     </resource>
 ${imageResources}
   </resources>
