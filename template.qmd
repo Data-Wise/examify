@@ -1,0 +1,41 @@
+---
+title: "My Exam"
+format: exam-gfm
+
+exam:
+  qti: true
+  solutions: false
+  default-points: 2
+---
+
+# Section: Multiple Choice
+
+## 1. Sample Question [2 pts]
+
+What is the capital of France?
+
+a) London
+b) Paris [x]
+c) Berlin
+d) Madrid
+
+## 2. [TF] The Earth is flat. [1 pt]
+
+a) True
+b) False [x]
+
+# Section: Short Answer
+
+## 3. [Short, 2pts] Name one programming language.
+
+Answer: Python
+
+<!--
+Render to markdown for QTI conversion:
+  quarto render template.qmd
+
+Then convert to QTI package:
+  examark template.md -o exam.qti.zip
+
+Upload the .qti.zip file to your LMS (Canvas, Blackboard, Moodle, etc.)
+-->

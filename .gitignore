@@ -31,5 +31,11 @@ scratch/
 # Extension copies in examples (source is _extensions/)
 examples/_extensions/
 
+# Quarto output
+_output/
+
 # Documentation
 site/
+
+/.quarto/
+**/*.quarto_ipynb

@@ -1,0 +1,37 @@
+project:
+  type: default
+  output-dir: _output
+  render:
+    - "examples/*.qmd"
+
+# =============================================================================
+# Examark Quarto Extension Project
+# =============================================================================
+#
+# This is the development project for the Examark Quarto extension.
+# The extension is located in _extensions/exam/
+#
+# Users install the extension via:
+#   quarto add Data-Wise/examark
+#
+# Or use the starter template:
+#   quarto use template Data-Wise/examark
+#
+# =============================================================================
+
+# Default format for examples (inherits from exam extension)
+format: exam-html
+
+# Default exam options
+exam:
+  solutions: false
+  default-points: 2
+
+# Extension: exam (auto-loaded from _extensions/exam/)
+# Available formats: exam-html, exam-pdf, exam-gfm, exam-odt, exam-docx, exam-typst
+#
+# QTI Export: Add `exam.qti: true` to any format
+# Example:
+#   format: exam-gfm
+#   exam:
+#     qti: true
