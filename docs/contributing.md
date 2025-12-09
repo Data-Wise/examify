@@ -83,41 +83,55 @@ Then manually:
 - Publish to npm: `npm publish --access public`
 - Update Homebrew: Edit `Formula/examark.rb` in the [homebrew-tap](https://github.com/Data-Wise/homebrew-tap) repo
 
-### Required Secrets
+### Required Setup
 
-For full automation, these secrets must be configured in GitHub repository settings:
+For full automation, you need:
 
-| Secret | Purpose |
-|--------|---------|
-| `NPM_TOKEN` | npm granular access token with publish permissions |
-| `HOMEBREW_TAP_TOKEN` | GitHub PAT with `repo` scope for homebrew-tap |
+| Component | Setup Location | Purpose |
+|-----------|----------------|---------|
+| npm Trusted Publisher | npmjs.com | Publishes packages via OIDC (no tokens!) |
+| `HOMEBREW_TAP_TOKEN` | GitHub Secrets | Updates Homebrew formula |
 
-#### Creating NPM_TOKEN (Granular Access Token)
+#### Setting Up npm Trusted Publishing (OIDC)
 
-As of November 2025, npm only supports **granular access tokens** (classic tokens are deprecated).
+We use [npm Trusted Publishing](https://docs.npmjs.com/trusted-publishers/) with OIDC authentication. This eliminates the need for npm tokens entirely.
 
-1. Go to [npmjs.com → Access Tokens](https://www.npmjs.com/settings/~/tokens)
-2. Click **"Generate New Token"** → **"Granular Access Token"**
-3. Configure:
-   - **Token name**: `examark-ci-publish`
-   - **Expiration**: Up to 90 days max (you'll need to rotate periodically)
-   - **Packages and scopes**: Select "Only select packages and scopes" → add `examark`
-   - **Permissions**: **Read and write**
-   - **Organizations**: Select your org if applicable
-4. Copy token and add as `NPM_TOKEN` secret in GitHub
+**One-time setup on npmjs.com:**
 
-!!! tip "Alternative: Trusted Publishing"
-    For even better security, consider [npm Trusted Publishing](https://docs.npmjs.com/trusted-publishers/) which uses OIDC and eliminates long-lived tokens entirely. Requires npm CLI 11.5.1+.
+1. Go to [npmjs.com](https://www.npmjs.com) and sign in
+2. Navigate to your package: **examark** → **Settings** → **Publishing access**
+3. Find **"Trusted Publishers"** section
+4. Click **"Add trusted publisher"** → Select **"GitHub Actions"**
+5. Configure:
+   - **Repository owner**: `Data-Wise`
+   - **Repository name**: `examark`
+   - **Workflow filename**: `release.yml`
+   - **Environment**: *(leave blank)*
+6. Click **"Add trusted publisher"**
+
+That's it! No tokens to manage, rotate, or secure.
+
+!!! success "Benefits of Trusted Publishing"
+    - **No tokens**: Uses short-lived OIDC credentials
+    - **No expiration**: Works indefinitely without rotation
+    - **No secrets**: Nothing to leak or secure
+    - **Provenance**: Automatic attestations included
 
 #### Creating HOMEBREW_TAP_TOKEN
 
+This token allows the release workflow to update the Homebrew formula.
+
 1. Go to [GitHub Settings → Tokens](https://github.com/settings/tokens)
-2. Click **"Generate new token"** → **"Generate new token (classic)"**
+2. Click **"Generate new token"** → **"Fine-grained token"** (recommended) or Classic
 3. Configure:
-   - **Note**: `examark-homebrew-tap`
-   - **Expiration**: 90 days or custom
-   - **Scopes**: Select `repo` (full control of private repositories)
-4. Copy token and add as `HOMEBREW_TAP_TOKEN` secret in GitHub
+   - **Token name**: `examark-homebrew-tap`
+   - **Expiration**: 90 days (or longer)
+   - **Repository access**: Select `Data-Wise/homebrew-tap`
+   - **Permissions**: Contents → **Read and write**
+4. Copy token and add as `HOMEBREW_TAP_TOKEN` secret:
+   - Go to [examark repo → Settings → Secrets](https://github.com/Data-Wise/examark/settings/secrets/actions)
+   - Click **"New repository secret"**
+   - Name: `HOMEBREW_TAP_TOKEN`, Value: *(paste token)*
 
 ### Running Tests
 

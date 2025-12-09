@@ -7,6 +7,7 @@ on:
 
 permissions:
   contents: write
+  id-token: write  # Required for npm trusted publishing (OIDC)
 
 jobs:
   build:
@@ -51,17 +52,20 @@ jobs:
             examark-extension.zip
           generate_release_notes: true
 
-  # Publish to npm registry
+  # Publish to npm registry using Trusted Publishing (OIDC)
   publish-npm:
     needs: build
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write  # Required for OIDC token generation
     steps:
       - uses: actions/checkout@v6
 
       - name: Setup Node.js
         uses: actions/setup-node@v6
         with:
-          node-version: '20'
+          node-version: '22'
           registry-url: 'https://registry.npmjs.org'
 
       - name: Setup Bun
@@ -75,10 +79,10 @@ jobs:
       - name: Build
         run: bun run build
 
+      # Publish using OIDC (no NPM_TOKEN needed)
+      # Trusted Publishing must be configured on npmjs.com first
       - name: Publish to npm
         run: npm publish --access public
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
   # Update Homebrew tap
   update-homebrew:

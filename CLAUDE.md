@@ -341,12 +341,12 @@ npm version patch   # Triggers: build → GitHub Release → npm publish → Hom
 1. Version bumped in package.json, src/index.ts, extension, README
 2. Git tag pushed
 3. GitHub Release created with CLI and extension zips
-4. Published to npm registry
+4. Published to npm registry via **OIDC Trusted Publishing** (no tokens!)
 5. Homebrew tap formula updated
 
-**Required secrets** (in GitHub repo settings):
-- `NPM_TOKEN`: npm publish access token
-- `HOMEBREW_TAP_TOKEN`: PAT with `repo` scope for Data-Wise/homebrew-tap
+**Required setup:**
+- **npm Trusted Publisher**: Configure on npmjs.com (Settings → Publishing access → Trusted Publishers → GitHub Actions with `Data-Wise/examark` and `release.yml`)
+- **`HOMEBREW_TAP_TOKEN`**: GitHub PAT with write access to Data-Wise/homebrew-tap
 
 ## Testing Notes
 
