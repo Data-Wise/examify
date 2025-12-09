@@ -1403,13 +1403,25 @@
 <p>Requires <a href="https://nodejs.org/">Node.js 18+</a>.</p>
 </div>
 <div class="tabbed-block">
-<p><strong>Step 1:</strong> Install <a href="https://nodejs.org/">Node.js</a> (version 18 or higher)</p>
-<p><strong>Step 2:</strong> Open Command Prompt or PowerShell and run:</p>
+<p><strong>Never used Node.js before?</strong> No problem! Here's the complete guide:</p>
+<ol>
+<li><strong>Download Node.js</strong> from <a href="https://nodejs.org/">nodejs.org</a> — click the big green "LTS" button</li>
+<li><strong>Run the installer</strong> — accept all defaults, click Next through everything</li>
+<li><strong>Open Command Prompt</strong> — search "cmd" in Start menu</li>
+<li><strong>Verify Node installed:</strong> type <code>node --version</code> and press Enter</li>
+<li><strong>Install examark:</strong></li>
+</ol>
 <div class="language-powershell highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="n">npm</span> <span class="n">install</span> <span class="n">-g</span> <span class="n">examark</span>
 </span></code></pre></div>
-<p><strong>Step 3:</strong> Verify installation:</p>
+<ol>
+<li><strong>Verify it worked:</strong></li>
+</ol>
 <div class="language-powershell highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="n">examark</span> <span class="p">-</span><span class="n">-version</span>
 </span></code></pre></div>
+<div class="admonition tip">
+<p class="admonition-title">Quickest Option</p>
+<p>Skip the global install and just use <code>npx examark quiz.md</code> — it runs without installing!</p>
+</div>
 </div>
 <div class="tabbed-block">
 <p>For contributing or modifying the source:</p>
