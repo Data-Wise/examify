@@ -4,12 +4,27 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Examify converts Markdown exam files to QTI 1.2 packages for Canvas LMS import.
+Examark converts Markdown exam files to QTI 1.2 packages for Canvas LMS import.
 
-- **Repo**: Data-Wise/examify
-- **Docs**: https://data-wise.github.io/examify/
-- **Version**: 0.4.2 | **Tests**: 188 passing
-- **Distribution**: npm (`examify`), Homebrew (`data-wise/tap/examify`)
+- **Repo**: Data-Wise/examark
+- **Docs**: https://data-wise.github.io/examark/
+- **Version**: 0.5.0 | **Tests**: 188 passing
+- **Distribution**: npm (`examark`), Homebrew (`data-wise/tap/examark`)
+
+## Upcoming: Rename to Examark
+
+**Decision**: Rename project from `examark` to `examark` (examark name conflicts with existing company).
+
+**Rename Plan:**
+1. **Phase 1 - Prepare**: Update source code, support both config file names
+2. **Phase 2 - Execute**: Rename GitHub repo (preserves stars/history)
+3. **Phase 3 - Ecosystem**: npm publish + deprecate old, Homebrew formula, Quarto extension
+4. **Phase 4 - Communication**: Release notes, migration guide
+
+**Backward Compatibility:**
+- Support both `.examarkrc.json` and `.examarkrc.json`
+- npm deprecation notice on old package
+- GitHub auto-redirects old URLs
 
 ## Build & Test Commands
 
@@ -37,27 +52,27 @@ node dist/index.js input.md -o output.qti.zip
 
 ```bash
 # Single file conversion
-examify input.md -o output.qti.zip    # Convert to QTI (default)
-examify input.md -f text              # Export as plain text for printing
-examify input.md -f text --no-answers # Exclude answer key from text
-examify input.md -p 2                 # Set default points to 2
-examify input.md -t "Final Exam"      # Override quiz title
-examify input.md -v                   # Convert and validate output
-examify input.md --preview            # Preview parsed questions (JSON)
+examark input.md -o output.qti.zip    # Convert to QTI (default)
+examark input.md -f text              # Export as plain text for printing
+examark input.md -f text --no-answers # Exclude answer key from text
+examark input.md -p 2                 # Set default points to 2
+examark input.md -t "Final Exam"      # Override quiz title
+examark input.md -v                   # Convert and validate output
+examark input.md --preview            # Preview parsed questions (JSON)
 
 # Batch conversion
-examify *.md -o output/               # Convert all .md files to output/
-examify exams/*.md -f text            # Export multiple files as text
+examark *.md -o output/               # Convert all .md files to output/
+examark exams/*.md -f text            # Export multiple files as text
 
 # Validation and utilities
-examify verify package.qti.zip         # Validate package structure
-examify emulate-canvas package.qti.zip # Simulate Canvas import
-examify check input.md                 # Lint markdown for errors
+examark verify package.qti.zip         # Validate package structure
+examark emulate-canvas package.qti.zip # Simulate Canvas import
+examark check input.md                 # Lint markdown for errors
 ```
 
 ## Configuration File
 
-Create `.examifyrc.json` or `examify.config.json` in your project:
+Create `.examarkrc.json` or `examark.config.json` in your project:
 
 ```json
 {
@@ -196,7 +211,7 @@ lintMarkdown() ◄──────────   QtiValidator.validatePackage(
 ```
 src/
 ├── index.ts              # CLI entry (Commander.js) - all commands defined here
-├── config.ts             # loadConfig() - loads .examifyrc.json settings
+├── config.ts             # loadConfig() - loads .examarkrc.json settings
 ├── parser/
 │   ├── markdown.ts       # parseMarkdown() - converts MD to ParsedQuiz
 │   └── types.ts          # Question, AnswerOption, ParsedQuiz types
@@ -234,7 +249,7 @@ src/
 4. Add tests in `tests/parser.test.ts` and `tests/generator.test.ts`
 
 ### Debugging a parsing issue
-1. Run `examify input.md --preview` to see parsed JSON
+1. Run `examark input.md --preview` to see parsed JSON
 2. Check `parseMarkdown()` in `src/parser/markdown.ts`
 3. Run specific test: `npm test -- -t "parser"`
 
