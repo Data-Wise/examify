@@ -8,8 +8,20 @@ Examark converts Markdown exam files to QTI 1.2 packages for Canvas LMS import.
 
 - **Repo**: Data-Wise/examark
 - **Docs**: https://data-wise.github.io/examark/
-- **Version**: 0.6.6 | **Tests**: 226 passing
+- **Version**: 0.6.6 | **Tests**: 233 passing
 - **Distribution**: npm (`examark`), Homebrew (`data-wise/tap/examark`), Quarto extension
+
+## Recent Changes (Dec 2025)
+
+**v0.6.6 - Templates Reorganization:**
+- Reorganized examples and templates into categorized folders:
+  - `templates/markdown/` - Production-ready Markdown starters (minimal.md, starter.md, all-question-types.md)
+  - `templates/quarto/` - Quarto starters (minimal.qmd, starter.qmd, dynamic.qmd, with-figures.qmd)
+  - `examples/markdown/` - Demo/testing files (statistics-exam.md, with-images.md, validation-test.md, edge-cases.md)
+  - `examples/quarto/` - Quarto examples (statistics-exam.qmd, canvas-export.qmd, python-figures.qmd)
+- Updated all documentation to reference new paths
+- 39 Quarto extension tests (38 passing, 1 skipped)
+- Extension copies in subdirs are gitignored (created at test time)
 
 ## History
 
