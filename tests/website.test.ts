@@ -145,7 +145,7 @@ describe('Documentation Website Tests', () => {
     it('should have templates section', () => {
       const content = readFileSync(join(docsDir, 'index.md'), 'utf-8');
       expect(content).toContain('Templates');
-      expect(content).toContain('starter-exam-md.md');
+      expect(content).toContain('starter.md');
     });
   });
 
