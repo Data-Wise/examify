@@ -245,10 +245,22 @@ Create `.examarkrc.json` for project defaults:
 
 ## Templates
 
+**Markdown (no Quarto needed):**
+
 | Template | Description |
 |----------|-------------|
-| [starter-exam-md.md](examples/starter-exam-md.md) | Basic — one of each question type |
+| [minimal.md](examples/minimal.md) | 3 questions — quickest start |
+| [starter-exam-md.md](examples/starter-exam-md.md) | One of each question type |
+| [statistics-exam.md](examples/statistics-exam.md) | Real exam with LaTeX math |
 | [canvas-ready.md](examples/canvas-ready.md) | Comprehensive — 21 questions |
+
+**Quarto (for R/Python users):**
+
+| Template | Description |
+|----------|-------------|
+| [minimal.qmd](examples/minimal.qmd) | Simplest Quarto template |
+| [starter-exam.qmd](examples/starter-exam.qmd) | Full-featured starter |
+| [dynamic-questions.qmd](examples/dynamic-questions.qmd) | Randomized questions with R |
 
 ---
 

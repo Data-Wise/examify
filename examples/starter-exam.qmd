@@ -3,22 +3,22 @@ title: "My First Exam"
 # ============================================================
 # STARTER TEMPLATE - Copy this file to begin authoring exams
 # ============================================================
-# 
+#
 # Output Formats:
-#   exam-gfm    → Markdown for Canvas QTI (use with examify CLI)
+#   exam-qti    → Markdown for LMS import (Canvas, Blackboard, Moodle)
 #   exam-html   → Preview in browser
 #   exam-pdf    → Printable student version
 #
-# Render command: quarto render starter-exam.qmd --to exam-gfm
-# Convert to QTI: examify starter-exam.md -o exam.qti.zip
+# Render command: quarto render starter-exam.qmd --to exam-qti
+# Convert to QTI: examark starter-exam.md -o exam.qti.zip
 # ============================================================
 
 format:
-  exam-gfm: default
-  
+  exam-qti: default
+
 exam:
   solutions: false      # Set to true for answer key
-  default-points: 1     # Default points per question
+  default-points: 2     # Default points per question
 ---
 
 # Section: Multiple Choice

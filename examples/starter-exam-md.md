@@ -4,14 +4,17 @@
 STARTER TEMPLATE - Copy this file to begin authoring exams
 ============================================================
 
-This is a plain Markdown template for Examify.
+This is a plain Markdown template for Examark.
 No Quarto or R required - just edit and convert!
 
-Convert to Canvas QTI:
-  examify starter-exam-md.md -o exam.qti.zip
+Convert to QTI (Canvas, Blackboard, Moodle):
+  examark starter-exam-md.md -o exam.qti.zip
 
 Preview parsed questions:
-  examify starter-exam-md.md --preview
+  examark starter-exam-md.md --preview
+
+Export for printing:
+  examark starter-exam-md.md -f text
 
 ============================================================
 -->

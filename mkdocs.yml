@@ -102,16 +102,19 @@ plugins:
 nav:
   - Home: index.md
   - Getting Started: getting-started.md
-  - Guide:
+  - User Guide:
       - Input Formats: formats.md
       - Commands Reference: reference.md
       - Configuration: config.md
-      - Canvas Emulator: emulator.md
       - Troubleshooting: troubleshooting.md
+  - Quarto Extension:
+      - Overview: extensions/quarto.md
+      - Canvas Workflow: emulator.md
   - Tutorials:
       - tutorials/index.md
+      - Your First Quiz: tutorials/first-quiz.md
       - R & Quarto: tutorials/quarto.md
       - Dynamic Exams: tutorials/dynamic-exams.md
       - VS Code Snippets: tutorials/vscode-snippets.md
-  - Quarto Extension: extensions/quarto.md
+  - Templates: templates.md
   - Contributing: contributing.md

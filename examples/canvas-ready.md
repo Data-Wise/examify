@@ -9,11 +9,11 @@ Classic Quizzes. Use this as a reference for the full syntax.
 
 Workflow:
   1. Edit this file with your questions
-  2. examify canvas-ready.md -o quiz.qti.zip
+  2. examark canvas-ready.md -o quiz.qti.zip
   3. Upload quiz.qti.zip to Canvas (Settings → Import Content)
 
 Verify before upload:
-  examify emulate-canvas quiz.qti.zip
+  examark emulate-canvas quiz.qti.zip
 
 ============================================================
 -->
