@@ -1,6 +1,6 @@
 {
   "name": "examark",
-  "version": "0.6.3",
+  "version": "0.6.4",
   "description": "Create exams from Markdown and export to Canvas QTI format",
   "main": "dist/index.js",
   "bin": {
