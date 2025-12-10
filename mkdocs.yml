@@ -103,6 +103,7 @@ nav:
   - Home: index.md
   - Getting Started: getting-started.md
   - User Guide:
+      - Question Types: question-types.md
       - Input Formats: formats.md
       - Commands Reference: reference.md
       - YAML Options: reference/yaml-options.md

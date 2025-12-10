@@ -40,7 +40,7 @@
 
     Predict import success *before* uploading. Catch errors early.
 
-- :material-format-list-checks:{ .lg .middle } **8 Question Types**
+- :material-format-list-checks:{ .lg .middle } **[8 Question Types](question-types.md)**
 
     ---
 
