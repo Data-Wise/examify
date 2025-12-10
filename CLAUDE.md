@@ -8,20 +8,25 @@ Examark converts Markdown exam files to QTI 1.2 packages for Canvas LMS import.
 
 - **Repo**: Data-Wise/examark
 - **Docs**: https://data-wise.github.io/examark/
-- **Version**: 0.6.6 | **Tests**: 233 passing
+- **Version**: 0.6.6 | **Tests**: 235 (234 passing, 1 skipped)
 - **Distribution**: npm (`examark`), Homebrew (`data-wise/tap/examark`), Quarto extension
 
 ## Recent Changes (Dec 2025)
 
+**Documentation Overhaul (Dec 9):**
+- New "Markdown" section with 6 pages: question-types, syntax, latex, images, feedback, structure
+- Reorganized navigation: Markdown / CLI Reference / Quarto Extension / Tutorials / Templates / Resources
+- Added `docs/DESIGN.md` documenting site architecture and design principles
+- Cleaned up project root (removed test artifacts, old files)
+- Disabled Quarto caching (`execute.cache: false`) to prevent `*_files` folders
+
 **v0.6.6 - Templates Reorganization:**
 - Reorganized examples and templates into categorized folders:
-  - `templates/markdown/` - Production-ready Markdown starters (minimal.md, starter.md, all-question-types.md)
-  - `templates/quarto/` - Quarto starters (minimal.qmd, starter.qmd, dynamic.qmd, with-figures.qmd)
-  - `examples/markdown/` - Demo/testing files (statistics-exam.md, with-images.md, validation-test.md, edge-cases.md)
-  - `examples/quarto/` - Quarto examples (statistics-exam.qmd, canvas-export.qmd, python-figures.qmd)
-- Updated all documentation to reference new paths
+  - `templates/markdown/` - Production-ready Markdown starters
+  - `templates/quarto/` - Quarto starters with dynamic content
+  - `examples/markdown/` - Demo/testing files
+  - `examples/quarto/` - Quarto examples
 - 39 Quarto extension tests (38 passing, 1 skipped)
-- Extension copies in subdirs are gitignored (created at test time)
 
 ## History
 
@@ -80,8 +85,9 @@ Examark converts Markdown exam files to QTI 1.2 packages for Canvas LMS import.
 
 **Project Hygiene (v0.6.6):**
 - Reorganized templates and examples into categorized folders
-- 233 tests passing
+- 235 tests (234 passing, 1 skipped)
 - Full backward compatibility for renamed project
+- Comprehensive documentation site with Material theme
 
 ### Canvas New Quizzes Support ✅
 
