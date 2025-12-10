@@ -523,10 +523,80 @@ After modifying `_extensions/exam/`:
 
 ## Testing Notes
 
-Tests use Vitest (195 tests). Test files mirror source structure:
+Tests use Vitest (233 tests). Test files mirror source structure:
 - `tests/parser.test.ts` - Markdown parsing (38 tests)
 - `tests/generator.test.ts` - QTI XML generation
 - `tests/text-generator.test.ts` - Plain text export
 - `tests/validator.test.ts` - Package validation
 - `tests/linter.test.ts` - Markdown linting
 - `tests/config.test.ts` - Config file loading
+- `tests/quarto-extension.test.ts` - Quarto extension (39 tests)
+- `tests/templates.test.ts` - Template files
+- `tests/website.test.ts` - Documentation site
+
+## Documentation Site
+
+The website (https://data-wise.github.io/examark/) uses MkDocs with Material theme.
+
+### Site Structure
+
+```
+docs/
+├── index.md                    # Homepage
+├── getting-started.md          # Quick start guide
+├── DESIGN.md                   # Site design documentation
+├── markdown/                   # Markdown syntax section
+│   ├── index.md               # Overview + quick reference
+│   ├── question-types.md      # Visual gallery (8 types)
+│   ├── syntax.md              # Complete syntax reference
+│   ├── latex.md               # LaTeX math guide
+│   ├── images.md              # Image bundling
+│   ├── feedback.md            # Feedback options
+│   └── structure.md           # Document organization
+├── reference/
+│   └── yaml-options.md        # YAML config reference
+├── extensions/
+│   └── quarto.md              # Quarto extension guide
+├── tutorials/                  # Step-by-step guides
+├── starter/                    # Template documentation
+├── config.md                   # Configuration
+├── emulator.md                 # Canvas emulator
+├── reference.md                # CLI commands
+├── troubleshooting.md          # Common issues
+├── formats.md                  # Legacy input formats
+└── contributing.md             # Developer guide
+```
+
+### Navigation
+
+```yaml
+nav:
+  - Home
+  - Getting Started
+  - Markdown/              # Syntax documentation
+  - CLI Reference/         # Commands, config, emulator
+  - Quarto Extension/
+  - Tutorials/
+  - Templates/
+  - Resources/             # Troubleshooting, contributing
+```
+
+### Building Docs
+
+```bash
+# Build site
+mkdocs build
+
+# Serve locally
+mkdocs serve
+
+# Deploy (automatic via GitHub Actions)
+```
+
+### Design Principles
+
+See `docs/DESIGN.md` for full documentation design guide:
+- Progressive disclosure (simple → detailed)
+- Task-oriented organization
+- Two audience tracks (Markdown users vs Quarto/R users)
+- Consistent page structure
