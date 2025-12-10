@@ -105,13 +105,18 @@ Examark converts Markdown exam files to QTI 1.2 packages for Canvas LMS import.
 
 ### Future Enhancements 📋
 
-**Near-term (Good First Issues):**
-- Question pools/banks support
-- Answer randomization options
-- Numeric answer ranges and tolerances
-- Auto-run examark after Quarto render (post-render hook)
+**Primary Users:** Statistics instructors using Quarto for dynamic exam generation.
+
+**High-Impact, Low-Effort (Next Up):**
+| Feature | Description | Use Case |
+|---------|-------------|----------|
+| Canvas screenshots | Show imported questions in docs | Help users understand output |
+| Answer randomization | Shuffle answer options | Reduce cheating |
+| Quarto post-render hook | Auto-run examark after render | Streamline workflow |
+| Numeric ranges | `Answer: 5-10` syntax | Accept range of values |
 
 **Medium-term:**
+- Question pools/banks support (random question selection)
 - QTI 2.1 export format (`src/generator/qti21.ts` exists, needs integration)
 - Question weighting/partial credit
 - More detailed error messages with line numbers
@@ -122,6 +127,7 @@ Examark converts Markdown exam files to QTI 1.2 packages for Canvas LMS import.
 - Question bank management
 - AI-assisted question generation
 - LTI integration for direct Canvas publishing
+- VS Code extension (syntax highlighting, preview)
 
 ### Research Notes (Dec 2025)
 
