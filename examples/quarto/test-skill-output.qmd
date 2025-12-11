@@ -1,0 +1,86 @@
+---
+title: "Statistics Quiz - Skill Test"
+format: exam-gfm
+exam:
+  qti: true
+  solutions: false
+  default-points: 1
+---
+
+# Section: Descriptive Statistics
+
+1. [MC] What is the mean of 2, 4, 6, 8? [2pts]
+a) 4
+b) 5 [x]
+c) 6
+d) 7
+
+2. [MC] Which measure is most affected by outliers? [1pt]
+a) Mean [x] // The mean is sensitive to extreme values
+b) Median // The median is resistant to outliers
+c) Mode // The mode is unaffected by outliers
+d) Range
+
+3. [TF] The variance can never be negative. → True [1pt]
+
+# Section: Probability
+
+4. [MA] Select all valid probability values. [2pts]
+a) -0.5
+b) 0 [x]
+c) 0.5 [x]
+d) 1.0 [x]
+e) 1.5
+
+5. [MC] If P(A) = 0.3 and P(B) = 0.4, and A and B are independent, what is P(A and B)? [2pts]
+a) 0.12 [x]
+b) 0.70
+c) 0.10
+d) 0.50
+
+> [feedback] For independent events, P(A and B) = P(A) × P(B) = 0.3 × 0.4 = 0.12
+
+# Section: Hypothesis Testing
+
+6. [TF] A p-value less than 0.05 always proves the alternative hypothesis is true. → False [1pt]
+
+7. [Short] What is the name of the error made when rejecting a true null hypothesis? [1pt]
+
+Answer: Type I error
+Answer: Type 1 error
+Answer: Type I
+
+# Section: Formulas and Calculations
+
+8. [MC] The sample variance formula is: [2pts]
+a) $s^2 = \frac{\sum (x_i - \bar{x})^2}{n}$
+b) $s^2 = \frac{\sum (x_i - \bar{x})^2}{n-1}$ [x]
+c) $s^2 = \sqrt{\frac{\sum (x_i - \bar{x})^2}{n-1}}$
+d) $s^2 = \frac{\sum x_i^2}{n}$
+
+9. [Num] If the sample mean is 50 and the sample standard deviation is 10, what is the sample variance? [2pts]
+
+Answer: 100 ± 0
+
+# Section: Matching
+
+10. [Match] Match each term to its definition. [4pts]
+- Population => All individuals of interest in a study
+- Sample => Subset of the population actually measured
+- Parameter => Numerical characteristic of a population
+- Statistic => Numerical characteristic of a sample
+
+# Section: Essay
+
+11. [Essay, 10pts] Explain the difference between correlation and causation.
+
+Provide at least one example to illustrate your answer.
+
+::: {.solution}
+**Key points to include:**
+- Correlation measures association between variables
+- Causation implies one variable directly causes changes in another
+- Correlation does not imply causation
+- Example: Ice cream sales and drowning deaths are correlated (both increase in summer), but ice cream doesn't cause drowning
+- Requires controlled experiments or careful causal analysis to establish causation
+:::
