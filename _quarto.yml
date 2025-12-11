@@ -3,6 +3,7 @@ project:
   output-dir: _output
   render:
     - "examples/*.qmd"
+  post-render: _quarto-post-render.sh
 
 # Disable caching to avoid intermediate folders
 execute:

@@ -13,6 +13,29 @@ Examark converts Markdown exam files to QTI 1.2 packages for Canvas LMS import.
 
 ## Recent Changes (Dec 2025)
 
+**Quarto GFM Compatibility Enhancements (Dec 11):**
+- Fixed: Inline code formatting - backticks now convert to `<code>` tags in QTI
+- Fixed: R-generated figures from Quarto now bundled in QTI packages
+- Fixed: Quarto figure divs (`<div id="fig-...">`) automatically included in question stems
+- Fixed: Escaped comparison operators (`\<` and `\>` in GFM) now render correctly as `&lt;` and `&gt;`
+- Fixed: HTML anchor tags with `class="quarto-xref"` no longer break parser
+- Fixed: Multi-line HTML `<img>` tags now properly extracted and bundled
+- Fixed: Quarto cross-reference anchors stripped from QTI output (replaced with plain text)
+- Added: Figure content preprocessing to capture images before questions
+- Added: HTML img tag support in image extraction and QTI generation
+- Added: Test suite for Quarto GFM compatibility (6 new tests)
+- Result: R plots, inline code, LaTeX math, comparison operators, and figure references all render correctly in Canvas
+
+**Positron IDE Integration (Dec 11):**
+- Created VS Code task for one-command QTI generation: `./qti-render <file.qmd>`
+- Global Positron keybinding: `Ctrl+Shift+Q` → Render + Generate QTI
+- Fixed: Positron only reads global keybindings (`~/Library/Application Support/Positron/User/keybindings.json`)
+- Fixed: Workspace keybindings (`.vscode/keybindings.json`) don't work in Positron
+- Added informative exam configuration messages (not warnings) to Lua filter
+- Changed exam-gfm defaults: `qti: true`, `solutions: false` by default
+- QTI files generated in project root (same directory as `.qmd` source)
+- Validated R-generated plots in QTI packages (6 diagnostic plots bundled successfully)
+
 **Claude Skills Package (Dec 10):**
 - Created comprehensive skill package in `.claude/skills/` (7 files + README)
 - Claude Desktop skills: exam generation, formatting, example exam, quick reference
@@ -381,6 +404,13 @@ src/
 | Change how answers are detected | `src/parser/markdown.ts:parseOptions()` |
 | Modify XML output | `src/generator/qti.ts:generateQuestionXml()` |
 | Add validation rule | `src/diagnostic/validator.ts` or `linter.ts` |
+| Handle Quarto figure divs | `src/parser/markdown.ts:658-674` (figure block detection) |
+| Skip HTML divs with class | `src/parser/markdown.ts:677-681` (skip `<div class=...>` but allow inline HTML) |
+| Extract images from HTML | `src/parser/markdown.ts:298-315` (markdown + HTML img tags) |
+| Process HTML img tags in QTI | `src/generator/qti.ts:46-59` (bundle HTML images) |
+| Strip Quarto cross-refs | `src/generator/qti.ts:61-63` (remove `<a class="quarto-xref">` tags) |
+| Format inline code | `src/generator/qti.ts:65-69` (backtick → `<code>` conversion) |
+| Fix escaped characters | `src/generator/qti.ts:76-80` (remove Quarto `\<` and `\>` escapes) |
 
 ## Common Workflows
 
@@ -620,12 +650,96 @@ The full format name = extension directory name + base format (e.g., `exam` + `h
 3. Filter outputs examark command to run
 4. Run: `examark myexam.md -o myexam.qti.zip`
 
+**Quarto GFM Compatibility Features:**
+- R-generated figures from code chunks are automatically bundled in QTI packages
+- Inline code (`` `code` ``) converts to HTML `<code>` tags
+- LaTeX math (`$x$`) converts to Canvas format `\(x\)`
+- Comparison operators (`<`, `>`) correctly escape to `&lt;` and `&gt;`
+- Figure divs (`<div id="fig-...">`) automatically prepended to following questions
+
 ### Updating the Extension
 
 After modifying `_extensions/exam/`:
 1. Update version in `_extension.yml`
 2. Test with `quarto render examples/minimal.qmd`
 3. Commit and push (extension is distributed via GitHub)
+
+## Positron IDE Workflow
+
+For users working in Positron (Posit's data science IDE), the project includes integrated keyboard shortcuts and tasks.
+
+### Quick Setup
+
+1. **Keyboard Shortcut**: Press `Ctrl+Shift+Q` while editing a `.qmd` file
+2. **Result**: Automatically renders Quarto + generates QTI package
+3. **Output Location**: Project root (same directory as `.qmd` file)
+
+### How It Works
+
+**Global Keybinding** (required for Positron):
+- Location: `~/Library/Application Support/Positron/User/keybindings.json`
+- Why: Positron doesn't read workspace keybindings (`.vscode/keybindings.json`)
+- Shortcut: `Ctrl+Shift+Q` (uses Ctrl to avoid macOS conflicts)
+
+**VS Code Task**:
+- Location: `.vscode/tasks.json`
+- Command: `./qti-render ${file}`
+- Also accessible via: `Cmd+Shift+P` → "Run Build Task"
+
+**QTI Render Script**:
+```bash
+./qti-render EXAM_FILE.qmd
+```
+- Runs `quarto render` to generate `.md`
+- Checks `exam.qti: true` in YAML
+- Runs `examark` to generate `.qti.zip`
+- Shows informative configuration messages
+
+### Exam Configuration Messages
+
+When rendering with `exam-gfm` format, you'll see:
+
+```
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📋 Exam Configuration
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  📦 QTI Generation:  ✓ Enabled
+  📝 Solutions:       ✗ Hidden (student version)
+
+  💡 Tip: Enable solutions to preview answers before
+     finalizing your exam:
+
+     exam:
+       solutions: true
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+```
+
+These are **informative messages** (not warnings) to help users understand their configuration.
+
+### Default Settings (exam-gfm)
+
+As of Dec 11, 2025, `exam-gfm` format defaults to:
+- `qti: true` - Auto-generate QTI (that's what GFM is for!)
+- `solutions: false` - Hide answers by default (safer)
+- `include-answers: true` - Include answer markers in markdown
+
+**Rationale**: Users rendering to `exam-gfm` are creating QTI packages, so it makes sense to enable QTI generation by default.
+
+### Troubleshooting
+
+**Shortcut doesn't work:**
+1. Reload Positron: `Cmd+Shift+P` → "Developer: Reload Window"
+2. Verify keybinding is in global file (not workspace)
+3. Check `when` clause: `editorLangId == 'quarto' && resourceExtname == .qmd`
+
+**QTI file not found:**
+- File is in **project root**, not `_output/` directory
+- Same location as your `.qmd` source file
+- Refresh file explorer in Positron if needed
+
+**Alternative method:**
+Use Command Palette: `Cmd+Shift+P` → "Tasks: Run Task" → "Render Exam + Generate QTI"
 
 ## Testing Notes
 

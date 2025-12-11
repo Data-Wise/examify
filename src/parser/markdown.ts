@@ -71,7 +71,8 @@ const TYPE_MARKER_ALIASES: Record<string, QuestionType> = {
 function extractTypeMarker(title: string): { type: QuestionType | null; cleanTitle: string } {
   // Build regex pattern from all aliases
   const aliasPattern = Object.keys(TYPE_MARKER_ALIASES).map(a => a.replace(/[\/\s]/g, '[/\\s]?')).join('|');
-  const markerRegex = new RegExp(`\\[(${aliasPattern})(?:,?\\s*\\d+\\s*pts?)?\\]`, 'i');
+  // Handle both [type] and \[type\] (Quarto escaping)
+  const markerRegex = new RegExp(`\\\\?\\[(${aliasPattern})(?:,?\\s*\\d+\\s*pts?)?\\\\?\\]`, 'i');
 
   const markerMatch = title.match(markerRegex);
   if (markerMatch) {
@@ -148,8 +149,8 @@ function hasCorrectMarker(text: string): boolean {
     text.includes('**') ||
     text.includes('✓') ||
     text.includes('✔') ||
-    /\[correct\]\s*$/i.test(text) ||
-    /\[x\]\s*$/i.test(text)
+    /\\?\[correct\\?\]\s*$/i.test(text) ||  // Matches [correct], \[correct], or \[correct\]
+    /\\?\[x\\?\]\s*$/i.test(text)           // Matches [x], \[x], or \[x\]
   );
 }
 
@@ -160,8 +161,8 @@ function cleanCorrectMarkers(text: string): string {
   return text
     .replace(/\*\*/g, '')
     .replace(/[✓✔]/g, '')
-    .replace(/\s*\[correct\]\s*$/i, '')
-    .replace(/\s*\[x\]\s*$/i, '')
+    .replace(/\s*\\?\[correct\\?\]\s*$/i, '')  // Removes [correct], \[correct], or \[correct\]
+    .replace(/\s*\\?\[x\\?\]\s*$/i, '')        // Removes [x], \[x], or \[x\]
     .trim();
 }
 
@@ -176,7 +177,33 @@ function cleanCorrectMarkers(text: string): string {
 function parseOptions(lines: string[]): AnswerOption[] {
   const options: AnswerOption[] = [];
 
-  for (const line of lines) {
+  // Join wrapped lines (continuation lines that start with whitespace)
+  const joinedLines: string[] = [];
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
+    const trimmed = line.trim();
+    if (!trimmed) {
+      joinedLines.push('');
+      continue;
+    }
+
+    // Check if this line starts with option marker (1), a), -, etc.)
+    const isOptionStart = /^(\*)?([a-e]|\d+)\)\s+/i.test(trimmed) || /^-\s+/.test(trimmed) || /^(\*)?(True|False)$/i.test(trimmed);
+
+    if (isOptionStart || joinedLines.length === 0) {
+      joinedLines.push(line);
+    } else {
+      // This is a continuation line - join with previous
+      const lastIdx = joinedLines.length - 1;
+      if (lastIdx >= 0 && joinedLines[lastIdx].trim()) {
+        joinedLines[lastIdx] += ' ' + trimmed;
+      } else {
+        joinedLines.push(line);
+      }
+    }
+  }
+
+  for (const line of joinedLines) {
     const trimmed = line.trim();
     if (!trimmed) continue;
 
@@ -230,11 +257,12 @@ function parseOptions(lines: string[]): AnswerOption[] {
       continue;
     }
 
-    // Match standalone True/False options: *True, *False, True, False (for T/F questions)
-    const tfMatch = trimmed.match(/^(\*)?(True|False)$/i);
+    // Match standalone True/False options: *True, \[x\] True, True, False (for T/F questions)
+    const tfMatch = trimmed.match(/^(?:\*|\\?\[x\\?\]\s*)?(True|False)$/i);
     if (tfMatch) {
-      const isCorrect = !!tfMatch[1]; // Has leading asterisk
-      const text = tfMatch[2]; // True or False
+      // Has leading asterisk or [x] marker
+      const isCorrect = trimmed.match(/^(?:\*|\\?\[x\\?\])/i) !== null;
+      const text = tfMatch[1]; // True or False
       options.push({
         id: text.toLowerCase() === 'true' ? 'a' : 'b',
         text: text.charAt(0).toUpperCase() + text.slice(1).toLowerCase(),
@@ -252,8 +280,8 @@ function parseOptions(lines: string[]): AnswerOption[] {
  */
 function extractPoints(title: string): { points: number | null; cleanTitle: string } {
   // Matches [2 pts], [2 points], \[2 pts\], etc.
-  // We handle optional backslashes before brackets
-  const match = title.match(/(?:\\\[|\[)(\d+)\s*pts?(?:\\\]|\])/i);
+  // Handle both [pts] and \[pts\] (Quarto escaping)
+  const match = title.match(/\\?\[(\d+)\s*pts?\\?\]/i);
   if (match) {
     return {
       points: parseInt(match[1], 10),
@@ -265,14 +293,25 @@ function extractPoints(title: string): { points: number | null; cleanTitle: stri
 
 /**
  * Extract distinct image paths from markdown text
+ * Handles both markdown syntax ![](path) and HTML <img src="path">
  */
 function extractImages(text: string): string[] {
   const images = new Set<string>();
-  const regex = /!\[.*?\]\((.*?)(?:\s+".*?")?\)/g;
+
+  // Match markdown images: ![alt](path)
+  const mdRegex = /!\[.*?\]\((.*?)(?:\s+".*?")?\)/g;
   let match;
-  while ((match = regex.exec(text)) !== null) {
+  while ((match = mdRegex.exec(text)) !== null) {
     images.add(match[1]);
   }
+
+  // Match HTML img tags: <img src="path" ...> (handles multi-line tags)
+  // Use [\s\S] instead of . to match across newlines
+  const htmlRegex = /<img[\s\S]*?src=["']([^"']+)["'][\s\S]*?>/gi;
+  while ((match = htmlRegex.exec(text)) !== null) {
+    images.add(match[1]);
+  }
+
   return Array.from(images);
 }
 
@@ -312,8 +351,40 @@ function parseOptionsWithFeedback(lines: string[]): { options: AnswerOption[]; g
   let generalFeedback: string | undefined;
   let lastOption: AnswerOption | null = null;
 
+  // Join wrapped lines (continuation lines that start with whitespace)
+  const joinedLines: string[] = [];
   for (let i = 0; i < lines.length; i++) {
-    const trimmed = lines[i].trim();
+    const line = lines[i];
+    const trimmed = line.trim();
+    if (!trimmed) {
+      joinedLines.push('');
+      continue;
+    }
+
+    // Don't join feedback lines
+    if (trimmed.startsWith('>')) {
+      joinedLines.push(line);
+      continue;
+    }
+
+    // Check if this line starts with option marker (1), a), -, etc.)
+    const isOptionStart = /^(\*)?([a-e]|\d+)\)\s+/i.test(trimmed) || /^-\s+/.test(trimmed) || /^(\*)?(True|False)$/i.test(trimmed);
+
+    if (isOptionStart || joinedLines.length === 0) {
+      joinedLines.push(line);
+    } else {
+      // This is a continuation line - join with previous (if not a feedback line)
+      const lastIdx = joinedLines.length - 1;
+      if (lastIdx >= 0 && joinedLines[lastIdx].trim() && !joinedLines[lastIdx].trim().startsWith('>')) {
+        joinedLines[lastIdx] += ' ' + trimmed;
+      } else {
+        joinedLines.push(line);
+      }
+    }
+  }
+
+  for (let i = 0; i < joinedLines.length; i++) {
+    const trimmed = joinedLines[i].trim();
     if (!trimmed) continue;
 
     // Check for feedback line (starts with >)
@@ -387,11 +458,12 @@ function parseOptionsWithFeedback(lines: string[]): { options: AnswerOption[]; g
       continue;
     }
 
-    // Match standalone True/False options
-    const tfMatch = trimmed.match(/^(\*)?(True|False)$/i);
+    // Match standalone True/False options: *True, \[x\] True, True, False
+    const tfMatch = trimmed.match(/^(?:\*|\\?\[x\\?\]\s*)?(True|False)$/i);
     if (tfMatch) {
-      const isCorrect = !!tfMatch[1];
-      const text = tfMatch[2];
+      // Has leading asterisk or [x] marker
+      const isCorrect = trimmed.match(/^(?:\*|\\?\[x\\?\])/i) !== null;
+      const text = tfMatch[1];
       lastOption = {
         id: text.toLowerCase() === 'true' ? 'a' : 'b',
         text: text.charAt(0).toUpperCase() + text.slice(1).toLowerCase(),
@@ -460,7 +532,10 @@ export function parseMarkdown(content: string): ParsedQuiz {
   let questionCounter = 0;
   let inCoverPage = true; // Skip cover page content
   let inSolutionBlock = false; // Track when inside <div class="solution">...</div>
-  
+  let inFigureBlock = false; // Track when inside <div id="fig-...">...</div>
+  let figureLines: string[] = []; // Collect figure content
+  let pendingFigure: string | null = null; // Figure content to prepend to next question
+
   const finalizeQuestion = () => {
     if (!currentQuestion || !currentQuestion.stem) {
       currentQuestion = null;
@@ -504,7 +579,21 @@ export function parseMarkdown(content: string): ParsedQuiz {
         if (answerMatch && currentQuestion.stem) {
           currentQuestion.stem = currentQuestion.stem.replace(answerMatch[0], '').trim();
         }
-      } else if (options.length === 0) {
+      }
+      // If TF question has only one option (e.g., only "\[x\] True"), add the other option
+      else if (type === 'true_false' && options.length === 1) {
+        const existingOption = options[0];
+        if (existingOption.text.toLowerCase() === 'true') {
+          // Add False option
+          options.push({ id: 'b', text: 'False', isCorrect: false });
+        } else {
+          // Add True option at the beginning
+          options.unshift({ id: 'a', text: 'True', isCorrect: false });
+          // Fix the existing option's id
+          options[1].id = 'b';
+        }
+      }
+      else if (options.length === 0) {
         if (type === 'multiple_choice') {
           type = 'short_answer';
         }
@@ -522,14 +611,23 @@ export function parseMarkdown(content: string): ParsedQuiz {
       }
     }
 
+    // Clean the stem: remove any remaining type markers, points, and correct answer markers
+    let cleanStem = currentQuestion.stem;
+    // Remove type markers: \[MC\], \[TF\], etc.
+    cleanStem = cleanStem.replace(/\\?\[(?:TF|MC|MA|Essay|Short|Match|FMB|Numeric|MultiAns|MultiAnswer|TrueFalse|True\/False|T\/F|MultiChoice|Multiple Choice|SelectAll|ShortAnswer|SA|FillBlank|FIB|LongAnswer|Matching|MAT|FillBlanks|MultiBlanks|FITB|Number|Numerical|Num)\\?\]/gi, '').trim();
+    // Remove points markers: \[2pts\], \[2 points\], etc.
+    cleanStem = cleanStem.replace(/\\?\[\d+\s*pts?\\?\]/gi, '').trim();
+    // Remove standalone correct answer markers that may have leaked into stem: \[x\] True, etc.
+    cleanStem = cleanStem.replace(/\\?\[x\\?\]\s*(True|False)?/gi, '').trim();
+
     const question: Question = {
       id: currentQuestion.id!,
       type,
-      stem: currentQuestion.stem,
+      stem: cleanStem,
       options,
       points: currentQuestion.points || defaultPoints,
       section: currentSection?.id,
-      images: extractImages(currentQuestion.stem),
+      images: extractImages(cleanStem),
       sourceLine: currentQuestionLine || undefined,
       matchPairs: matchPairs?.length ? matchPairs : undefined,
       blanks: blanks?.length ? blanks : undefined,
@@ -550,8 +648,8 @@ export function parseMarkdown(content: string): ParsedQuiz {
     const line = lines[i];
     const trimmed = line.trim();
     
-    // Skip empty lines and horizontal rules
-    if (!trimmed || trimmed === '---' || trimmed.match(/^-{3,}$/)) {
+    // Skip empty lines, horizontal rules, and HTML comments
+    if (!trimmed || trimmed === '---' || trimmed.match(/^-{3,}$/) || trimmed.match(/^<!--.*-->$/)) {
       continue;
     }
     
@@ -567,9 +665,29 @@ export function parseMarkdown(content: string): ParsedQuiz {
     if (inSolutionBlock) {
       continue; // Skip all content inside solution blocks
     }
-    
+
+    // Track figure blocks: <div id="fig-..."> ... </div>
+    if (trimmed.includes('<div') && trimmed.includes('id="fig-')) {
+      inFigureBlock = true;
+      figureLines = [];
+      continue;
+    }
+    if (trimmed.includes('</div>') && inFigureBlock) {
+      inFigureBlock = false;
+      // Store the collected figure content to prepend to next question
+      pendingFigure = figureLines.join('\n\n');
+      figureLines = [];
+      continue;
+    }
+    if (inFigureBlock) {
+      figureLines.push(trimmed);
+      continue;
+    }
+
     // Skip callout blocks and other metadata (but NOT feedback lines starting with >)
-    if (trimmed.startsWith(':::') || trimmed.includes('class=')) {
+    // Allow inline HTML with class= (like Quarto cross-references: <a href="#fig-..." class="quarto-xref">)
+    // Only skip lines that are ONLY HTML div tags with class attributes
+    if (trimmed.startsWith(':::') || (trimmed.startsWith('<div') && trimmed.includes('class='))) {
       continue;
     }
 
@@ -653,6 +771,13 @@ export function parseMarkdown(content: string): ParsedQuiz {
 
       questionCounter++;
       currentQuestionLine = i + 1; // Store 1-indexed line number
+
+      // Prepend any pending figure to the question stem
+      if (pendingFigure) {
+        stemText = pendingFigure + '\n\n' + stemText;
+        pendingFigure = null; // Clear after use
+      }
+
       currentQuestion = {
         id: questionNum || questionCounter,
         type,
@@ -681,14 +806,15 @@ export function parseMarkdown(content: string): ParsedQuiz {
       continue;
     }
     
-    // Standalone True/False options (*True, *False, True, False)
-    if (currentQuestion && trimmed.match(/^\*?(True|False)$/i)) {
+    // Standalone True/False options (*True, \[x\] True, True, False)
+    if (currentQuestion && trimmed.match(/^(?:\*|\\?\[x\\?\]\s*)?(True|False)$/i)) {
       currentQuestionLines.push(trimmed);
       continue;
     }
     
     // Dash list items as options (including matching pairs with ::)
-    if (currentQuestion && trimmed.startsWith('-')) {
+    // But NOT negative numbers like "-0.678"
+    if (currentQuestion && trimmed.startsWith('- ')) {
       currentQuestionLines.push(trimmed);
       continue;
     }
@@ -706,8 +832,14 @@ export function parseMarkdown(content: string): ParsedQuiz {
         // Include LaTeX in stem
         currentQuestion.stem += '\n\n' + trimmed;
       } else if (!trimmed.match(/^\d+\)\s/) && !trimmed.match(/^[a-e]\)/i)) {
-        // Regular description text or image
-        currentQuestion.stem += '\n\n' + trimmed;
+        // If we already have option lines, treat this as a continuation line for options
+        // Otherwise, add to stem
+        if (currentQuestionLines.length > 0) {
+          currentQuestionLines.push(trimmed);
+        } else {
+          // Regular description text or image for stem
+          currentQuestion.stem += '\n\n' + trimmed;
+        }
       }
     }
     

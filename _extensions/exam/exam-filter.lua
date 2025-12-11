@@ -184,6 +184,51 @@ end
 function Pandoc(doc)
   -- Check if QTI generation is requested
   local qti_enabled = exam_options.qti == "true"
+  local solutions_enabled = exam_options.solutions == "true"
+  local is_gfm = quarto.doc.is_format("gfm")
+
+  -- Show friendly informative message about current settings (for GFM format only)
+  if is_gfm then
+    quarto.log.output("")
+    quarto.log.output("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+    quarto.log.output("📋 Exam Configuration")
+    quarto.log.output("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+
+    if qti_enabled then
+      quarto.log.output("  📦 QTI Generation:  ✓ Enabled")
+    else
+      quarto.log.output("  📦 QTI Generation:  ✗ Disabled")
+    end
+
+    if solutions_enabled then
+      quarto.log.output("  📝 Solutions:       ✓ Visible (answer key shown)")
+    else
+      quarto.log.output("  📝 Solutions:       ✗ Hidden (student version)")
+    end
+
+    quarto.log.output("")
+
+    -- Helpful tip if QTI enabled but solutions hidden
+    if qti_enabled and not solutions_enabled then
+      quarto.log.output("  💡 Tip: Enable solutions to preview answers before")
+      quarto.log.output("     finalizing your exam:")
+      quarto.log.output("")
+      quarto.log.output("     exam:")
+      quarto.log.output("       solutions: true")
+      quarto.log.output("")
+    end
+
+    -- Tip if neither enabled
+    if not qti_enabled and not solutions_enabled then
+      quarto.log.output("  💡 Tip: To generate QTI for Canvas, set:")
+      quarto.log.output("     exam:")
+      quarto.log.output("       qti: true")
+      quarto.log.output("")
+    end
+
+    quarto.log.output("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+    quarto.log.output("")
+  end
 
   if not qti_enabled then
     return doc

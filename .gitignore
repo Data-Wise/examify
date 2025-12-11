@@ -51,3 +51,6 @@ site/
 
 /.quarto/
 **/*.quarto_ipynb
+
+# Final exam files (working copies)
+FINAL_EXAM*

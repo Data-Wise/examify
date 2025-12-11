@@ -139,4 +139,36 @@ describe('QTI 1.2 Generator (Canvas)', () => {
     expect(qti).toContain('Correct!');
     expect(qti).toContain('Review chapter 5.');
   });
+
+  it('should convert inline code and LaTeX math to HTML', () => {
+    const quiz: ParsedQuiz = {
+      title: 'Test',
+      defaultPoints: 1,
+      sections: [],
+      questions: [{
+        id: 1,
+        type: 'multiple_choice',
+        stem: 'Use `car::vif()` to check for $\\alpha = 0.05$ significance.',
+        points: 1,
+        options: [
+          { id: 'a', text: 'Run `lm()` with $\\beta_1 > 0$', isCorrect: true },
+          { id: 'b', text: 'Wrong', isCorrect: false }
+        ]
+      }]
+    };
+
+    const { qti } = generateQTI(quiz);
+
+    // Check inline code conversion: `code` → <code>code</code>
+    expect(qti).toContain('<code>car::vif()</code>');
+    expect(qti).toContain('<code>lm()</code>');
+
+    // Check LaTeX conversion: $...$ → \(...\)
+    expect(qti).toContain('\\(\\alpha = 0.05\\)');
+    expect(qti).toContain('\\(\\beta_1 &gt; 0\\)');
+
+    // Ensure backticks are not in output
+    expect(qti).not.toContain('`car::vif()`');
+    expect(qti).not.toContain('`lm()`');
+  });
 });

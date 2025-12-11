@@ -1,14 +1,15 @@
 #!/usr/bin/env node
 /**
  * Quarto Exam Post-Render Script
- * Converts rendered Markdown to QTI format using the qti-convert CLI
- * 
- * Usage: Called automatically by Quarto post-render when output: qti is set
+ * Converts rendered Markdown to QTI format using examark CLI
+ *
+ * Usage: Called automatically by Quarto post-render when exam.qti: true
  */
 
 import { execSync } from 'child_process';
-import { existsSync, readFileSync } from 'fs';
+import { existsSync } from 'fs';
 import { dirname, basename, join } from 'path';
+import { fileURLToPath } from 'url';
 
 const args = process.argv.slice(2);
 const inputFile = args[0];
@@ -27,49 +28,47 @@ const dir = dirname(inputFile);
 const base = basename(inputFile, '.md');
 const outputFile = join(dir, `${base}.qti.zip`);
 
-// Check for opt-in flag in frontmatter
-const content = readFileSync(inputFile, 'utf8');
-const yamlMatch = content.match(/^---\n([\s\S]*?)\n---/);
-
-// Default to FALSE. Only run if explicitly enabled.
-let shouldRun = false;
-
-if (yamlMatch) {
-  const yaml = yamlMatch[1];
-  // Simple regex check for "qti-export: true" or "qti: true"
-  if (yaml.match(/qti-export:\s*true/) || yaml.match(/qti:\s*true/)) {
-    shouldRun = true;
+// Find examark CLI
+function findExamarkCli() {
+  // Try 1: Global install (npm or homebrew)
+  try {
+    execSync('which examark', { stdio: 'pipe' });
+    return 'examark';
+  } catch (e) {
+    // Not in PATH
   }
+
+  // Try 2: Development mode - ../../dist/index.js
+  const scriptDir = dirname(fileURLToPath(import.meta.url));
+  const devCliPath = join(scriptDir, '..', '..', 'dist', 'index.js');
+  if (existsSync(devCliPath)) {
+    return `node "${devCliPath}"`;
+  }
+
+  return null;
 }
 
-if (!shouldRun) {
-  console.log('ℹ️ QTI generation skipped. Add `qti-export: true` to YAML to enable.');
-  process.exit(0);
+const examarkCmd = findExamarkCli();
+
+if (!examarkCmd) {
+  console.error('❌ examark CLI not found.');
+  console.error('   Install: npm install -g examark');
+  console.error('   Or run manually: examark ' + basename(inputFile) + ' -o ' + basename(outputFile));
+  process.exit(1);
 }
 
 try {
-  // Use the qti-convert CLI from this package
-  // The script is in _extensions/exam/qti-post-render.js
-  // The CLI is in dist/index.js
-  // So we need to go up two levels: ../../dist/index.js
-  const scriptDir = dirname(import.meta.url.replace('file://', ''));
-  const cliPath = join(scriptDir, '..', '..', 'dist', 'index.js');
-  
-  if (!existsSync(cliPath)) {
-    throw new Error(`CLI not found at ${cliPath}`);
-  }
-
-  // Since we set CWD to the input file's directory, we must pass filenames, not paths
   const inputFilename = basename(inputFile);
   const outputFilename = basename(outputFile);
 
-  execSync(`node "${cliPath}" "${inputFilename}" -o "${outputFilename}"`, {
+  console.log('\n📦 Generating QTI package...');
+  execSync(`${examarkCmd} "${inputFilename}" -o "${outputFilename}"`, {
     stdio: 'inherit',
     cwd: dir
   });
-  
-  console.log(`✓ QTI package generated: ${outputFile}`);
+
+  console.log(`✅ QTI package ready: ${outputFilename}\n`);
 } catch (error) {
-  console.error('Error generating QTI:', error.message);
+  console.error('❌ Error generating QTI:', error.message);
   process.exit(1);
 }

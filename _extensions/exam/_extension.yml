@@ -107,11 +107,14 @@ contributes:
     # =========================================
     # GFM Format (exam-gfm)
     # GitHub Flavored Markdown for QTI export
-    # Recommended format when using exam.qti: true
+    # Auto-generates QTI by default
     # =========================================
     gfm:
       variant: gfm+tex_math_dollars
+      post-render: qti-post-render.js
       exam:
+        qti: true
+        solutions: false
         include-answers: true
 
     # =========================================

@@ -671,5 +671,116 @@ b) False
       expect(result.questions[1].points).toBe(2);
     });
   });
+
+  describe('Quarto GFM Compatibility', () => {
+    it('should handle escaped brackets in correct answer markers', () => {
+      const input = `# Quiz
+
+## 1. Question with escaped bracket marker
+a) Wrong
+b) Right \\[x\\]
+c) Wrong
+`;
+      const result = parseMarkdown(input);
+      expect(result.questions).toHaveLength(1);
+      expect(result.questions[0].options).toHaveLength(3);
+      expect(result.questions[0].options[0].isCorrect).toBe(false);
+      expect(result.questions[0].options[1].isCorrect).toBe(true);
+      expect(result.questions[0].options[1].text).toBe('Right');
+      expect(result.questions[0].options[2].isCorrect).toBe(false);
+    });
+
+    it('should handle wrapped option text with escaped markers', () => {
+      const input = `# Quiz
+
+## 1. Question with wrapped text
+1) Short answer
+2) This is a very long answer that spans multiple lines
+   and continues here \\[x\\]
+3) Another option
+`;
+      const result = parseMarkdown(input);
+      expect(result.questions).toHaveLength(1);
+      expect(result.questions[0].options).toHaveLength(3);
+      expect(result.questions[0].options[1].isCorrect).toBe(true);
+      expect(result.questions[0].options[1].text).toContain('continues here');
+      expect(result.questions[0].options[1].text).not.toContain('\\[x\\]');
+    });
+
+    it('should skip HTML comments inserted by Quarto', () => {
+      const input = `# Quiz
+
+1. [MC] Question text [1pt]
+
+<!-- -->
+
+a) Option A
+b) Option B \\[x\\]
+`;
+      const result = parseMarkdown(input);
+      expect(result.questions).toHaveLength(1);
+      expect(result.questions[0].options).toHaveLength(2);
+      expect(result.questions[0].options[1].isCorrect).toBe(true);
+    });
+
+    it('should handle numbered lists with escaped markers (Quarto GFM)', () => {
+      const input = `# Quiz
+
+1. \\[MC\\] Question one \\[1pt\\]
+
+1) Wrong
+2) Right \\[x\\]
+3) Wrong
+`;
+      const result = parseMarkdown(input);
+      expect(result.questions).toHaveLength(1);
+      expect(result.questions[0].type).toBe('multiple_choice');
+      expect(result.questions[0].points).toBe(1);
+      expect(result.questions[0].options[1].isCorrect).toBe(true);
+    });
+
+    it('should handle mixed escaped and unescaped markers', () => {
+      const input = `# Quiz
+
+## 1. Unescaped marker
+a) A [x]
+b) B
+
+## 2. Escaped marker
+a) A
+b) B \\[x\\]
+
+## 3. Partially escaped
+a) A \\[x]
+b) B
+`;
+      const result = parseMarkdown(input);
+      expect(result.questions).toHaveLength(3);
+      expect(result.questions[0].options[0].isCorrect).toBe(true);
+      expect(result.questions[1].options[1].isCorrect).toBe(true);
+      expect(result.questions[2].options[0].isCorrect).toBe(true);
+    });
+
+    it('should handle option continuation lines correctly', () => {
+      const input = `# Quiz
+
+1. \\[MC\\] Question with wrapped option
+
+a) First option
+b) Second option that is
+   very long and wraps \\[x\\]
+c) Third option
+
+> Feedback here
+`;
+      const result = parseMarkdown(input);
+      expect(result.questions).toHaveLength(1);
+      expect(result.questions[0].options).toHaveLength(3);
+      expect(result.questions[0].options[1].isCorrect).toBe(true);
+      expect(result.questions[0].options[1].text).toContain('very long and wraps');
+      // Make sure feedback isn't included in option text
+      expect(result.questions[0].options[2].feedback).toContain('Feedback here');
+    });
+  });
 });
 

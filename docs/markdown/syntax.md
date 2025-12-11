@@ -305,6 +305,40 @@ b) $x = 10$ [x]
 c) $x = 15$
 ```
 
+### Inline Code
+
+Use backticks for code formatting (converts to HTML `<code>` tags in QTI):
+
+```markdown
+1. [MC] What does the `lm()` function return? [2pts]
+a) A data frame
+b) A linear model object [x]
+c) A plot
+
+2. [MC] In R, what is `TRUE + TRUE`? [1pt]
+a) 0
+b) 1
+c) 2 [x]
+```
+
+This is especially useful for statistics exams with R code.
+
+### Special Characters
+
+Comparison operators and special characters work correctly:
+
+```markdown
+1. [MC] Which is correct for a p-value < 0.05? [2pts]
+a) Reject null hypothesis [x]
+b) Fail to reject null hypothesis
+
+2. [MC] If x > 10 and y < 5, what is the range? [2pts]
+a) 5 < range < 10
+b) range > 5 [x]
+```
+
+**Note**: If using Quarto with GFM output, escaped characters (`\<` and `\>`) are automatically handled correctly in QTI conversion.
+
 ---
 
 ## Complete Example

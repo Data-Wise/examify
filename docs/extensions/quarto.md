@@ -363,6 +363,23 @@ plot(x, y)
 ## 1. Describe the relationship shown above.
 ````
 
+**Quarto Cross-References (New!)**: You can use Quarto's `@fig-` syntax to reference figures in your questions. The figures and references are automatically handled when converting to QTI:
+
+````markdown
+```{r}
+#| label: fig-residuals
+#| fig-cap: "Residual Plot"
+plot(fitted(model), residuals(model))
+```
+
+## 1. @fig-residuals shows the residual plot. What does this indicate?
+
+a) Homoscedasticity [correct]
+b) Heteroscedasticity
+````
+
+The `@fig-residuals` reference will be converted to "Figure 1" in the QTI output, and the image will be automatically bundled.
+
 ## Templates
 
 We provide ready-to-use templates in the [`templates/quarto/`](https://github.com/Data-Wise/examark/tree/main/templates/quarto) folder:

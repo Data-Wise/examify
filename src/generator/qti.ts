@@ -42,26 +42,64 @@ function escapeXmlPreserveLaTeX(text: string, imageResolver?: ImageResolver): st
     images.push(`<img src="${imgSrc}" alt="${alt}"/>`);
     return placeholder;
   });
-  
+
+  // Also process HTML img tags (from Quarto figure blocks)
+  result = result.replace(/<img[\s\S]*?src=["']([^"']+)["'][\s\S]*?>/gi, (match, src) => {
+    const placeholder = `__IMG_PLACEHOLDER_${images.length}__`;
+    let imgSrc = src;
+    if (imageResolver) {
+      const resolved = imageResolver(src);
+      if (resolved) {
+        imgSrc = resolved;
+      }
+    }
+    // Preserve other attributes from the original tag if needed, but for simplicity just use src
+    images.push(`<img src="${imgSrc}" alt=""/>`);
+    return placeholder;
+  });
+
+  // Strip Quarto cross-reference anchor tags (e.g., <a href="#fig-..." class="quarto-xref">Figure 1</a>)
+  // Replace with just the link text since figures are already embedded
+  result = result.replace(/<a\s+href=["']#[^"']*["']\s+class=["']quarto-xref["'][^>]*>(.*?)<\/a>/gi, '$1');
+
+  // Extract and preserve inline code (backticks) as placeholders
+  const codeSnippets: string[] = [];
+  result = result.replace(/`([^`]+)`/g, (match, code) => {
+    const placeholder = `__CODE_PLACEHOLDER_${codeSnippets.length}__`;
+    codeSnippets.push(`<code>${code}</code>`);
+    return placeholder;
+  });
+
   // Convert LaTeX delimiters from Quarto/Pandoc format to Canvas format
   result = result
     // Convert display math: $$...$$ → \[...\]
     .replace(/\$\$([\s\S]*?)\$\$/g, '\\[$1\\]')
     // Convert inline math: $...$ → \(...\) (careful not to match \$)
     .replace(/(?<!\\)\$([^\$\n]+?)\$/g, '\\($1\\)');
-  
+
+  // Remove Quarto's backslash escapes for < and > (e.g., \< and \>)
+  // These should become HTML entities, not literal backslash + entity
+  result = result
+    .replace(/\\</g, '<')
+    .replace(/\\>/g, '>');
+
   // Escape XML special characters
   result = result
     .replace(/&/g, '&amp;')
     .replace(/</g, '&lt;')
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;');
-  
+
   // Restore image tags (they're already properly formatted HTML)
   images.forEach((img, i) => {
     result = result.replace(`__IMG_PLACEHOLDER_${i}__`, img);
   });
-  
+
+  // Restore code tags (they're already properly formatted HTML)
+  codeSnippets.forEach((code, i) => {
+    result = result.replace(`__CODE_PLACEHOLDER_${i}__`, code);
+  });
+
   return result;
 }
 
@@ -438,8 +476,9 @@ function generateQuestionXml(question: Question, imageResolver?: ImageResolver):
       `</response_str>`;
   } else {
     // Multiple choice, multiple answers, true/false
+    const escapedStem = escapeXmlPreserveLaTeX(question.stem, imageResolver);
     presentationContent = `<material>` +
-      `<mattext texttype="text/html">${escapeXmlPreserveLaTeX(question.stem, imageResolver)}</mattext>` +
+      `<mattext texttype="text/html">${escapedStem}</mattext>` +
       `</material>` +
       `<response_lid ident="response1" rcardinality="Single">` +
       `<render_choice>` +
